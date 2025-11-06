@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAÜ Yemekhane · Giriş & Kayıt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --subtle: #6e6e73;
+      --border-soft: rgba(0,0,0,0.08);
+      --shadow-soft: 0 14px 40px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        system-ui, -system-ui, "Segoe UI", sans-serif;
+      /* Daha koyu, fotoğrafı öne çıkaran arka plan */
+      background:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.10) 0, transparent 55%),
+        #05060a;
+      color: var(--ink);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* DARK MODE TEMEL DEĞERLERİ */
+    body[data-theme="dark"] {
+      --ink: #f5f5f7;
+      --subtle: #a1a1a6;
+      --border-soft: rgba(255,255,255,0.14);
+      --shadow-soft: 0 18px 46px rgba(0,0,0,0.7);
+      background:
+        radial-gradient(circle at 0 0, rgba(255,255,255,0.04) 0, transparent 55%),
+        #000000;
+      color: var(--ink);
+    }
+
+    .bg-hero {
+      position: fixed;
+      right: -120px;
+      top: -80px;
+      width: 560px;
+      height: 560px;
+      background-image: url("campus-hero.jpg");
+      background-size: cover;
+      background-position: center;
+      filter: blur(8px) saturate(1.1);
+      opacity: 0.8; /* daha görünür */
+      transform: rotate(-4deg);
+      pointer-events: none;
+      z-index: -1;
+      border-radius: 50%;
+      mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+    }
+
+    body[data-theme="dark"] .bg-hero {
+      opacity: 0.65;
+      filter: blur(10px) saturate(1.15);
+    }
+
+    .top-nav {
+      max-width: 1100px;
+      margin: 18px auto 0;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--subtle);
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo-img { height: 40px; width: auto; display: block; }
+    .brand-text-main {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f5f5f7;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-pill {
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #f5f5f7;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .nav-toggle {
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .nav-toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0,113,227,0.3);
+    }
+
+    body[data-theme="light"] .nav-pill {
+      border-color: rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.65);
+      color: #3a3a3c;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 72px 16px 40px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 640px;
+      background: #ffffff;
+      border-radius: 32px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 28px 28px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60px;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,145,255,0.08) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(39,174,96,0.08) 0, transparent 55%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body[data-theme="dark"] .card {
+      background: #1c1c1e;
+      border-color: var(--border-soft);
+    }
+    body[data-theme="dark"] .card::before {
+      background:
+        radial-gradient(circle at 0 0, rgba(0,145,255,0.14) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(39,174,96,0.12) 0, transparent 55%);
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 18px;
+    }
+    .tagline {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #6e6e73;
+    }
+    .title {
+      font-size: 24px;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+      color: #1d1d1f;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--subtle);
+      max-width: 420px;
+    }
+
+    body[data-theme="dark"] .title {
+      color: #f5f5f7;
+    }
+    body[data-theme="dark"] .subtitle {
+      color: var(--subtle);
+    }
+    body[data-theme="dark"] .tagline {
+      color: var(--subtle);
+    }
+
+    .tabs {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px;
+      background: #f5f5f7;
+      margin-bottom: 16px;
+    }
+    .tab {
+      border: none;
+      background: transparent;
+      padding: 6px 18px;
+      font-size: 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #3a3a3c;
+    }
+    .tab.active {
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      color: #111;
+    }
+
+    body[data-theme="dark"] .tabs {
+      background: #2c2c2e;
+    }
+    body[data-theme="dark"] .tab {
+      color: #a1a1a6;
+    }
+    body[data-theme="dark"] .tab.active {
+      background: #3a3a3c;
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    .form-group { margin-bottom: 14px; }
+    .label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #3a3a3c;
+    }
+    body[data-theme="dark"] .label {
+      color: #f5f5f7;
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 13px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #f5f5f7;
+      color: #111;
+      font-size: 14px;
+      outline: none;
+      transition: border 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+    .input::placeholder { color: #9f9fa3; }
+    .input:focus {
+      border-color: #0071e3;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.18);
+    }
+
+    body[data-theme="dark"] .input {
+      background: #2c2c2e;
+      border-color: rgba(255,255,255,0.16);
+      color: #f5f5f7;
+    }
+    body[data-theme="dark"] .input::placeholder {
+      color: #8e8e93;
+    }
+    body[data-theme="dark"] .input:focus {
+      background: #1c1c1e;
+      border-color: #0a84ff;
+      box-shadow: 0 0 0 3px rgba(10,132,255,0.4);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      outline: none;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 160ms ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0071e3, #0f7fff);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(0,113,227,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(0,113,227,0.5);
+    }
+
+    .btn-secondary {
+      background: #f5f5f7;
+      color: #111;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .btn-secondary:hover {
+      background: #e5e5ea;
+      transform: translateY(-1px);
+    }
+
+    body[data-theme="dark"] .btn-secondary {
+      background: #2c2c2e;
+      color: #f5f5f7;
+      border-color: rgba(255,255,255,0.16);
+    }
+    body[data-theme="dark"] .btn-secondary:hover {
+      background: #3a3a3c;
+    }
+
+    .link-button {
+      border: none;
+      background: transparent;
+      color: #0071e3;
+      text-decoration: underline;
+      padding: 0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    body[data-theme="dark"] .link-button {
+      color: #0a84ff;
+    }
+
+    .checkbox-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--subtle);
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--subtle);
+      cursor: pointer;
+    }
+    .checkbox-label input[type="checkbox"] {
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .auth-message {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--subtle);
+      min-height: 16px;
+    }
+    .auth-message.error { color: #d70015; }
+    .auth-message.success { color: #1d9f3a; }
+
+    body[data-theme="dark"] .auth-message {
+      color: var(--subtle);
+    }
+    body[data-theme="dark"] .auth-message.error {
+      color: #ff453a;
+    }
+    body[data-theme="dark"] .auth-message.success {
+      color: #30d158;
+    }
+
+    /* Sözleşme modalı */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+    .modal-backdrop.visible {
+      display: flex;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 680px;
+      max-height: 80vh;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+      padding: 18px 20px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    body[data-theme="dark"] .modal-card {
+      background: #1c1c1e;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    body[data-theme="dark"] .modal-title {
+      color: #f5f5f7;
+    }
+    .modal-close-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #f5f5f7;
+      color: #111;
+    }
+    body[data-theme="dark"] .modal-close-btn {
+      background: #2c2c2e;
+      color: #f5f5f7;
+    }
+    .modal-body {
+      flex: 1;
+      overflow: auto;
+      font-size: 12px;
+      color: #3a3a3c;
+      padding-right: 4px;
+    }
+    body[data-theme="dark"] .modal-body {
+      color: #e5e5ea;
+    }
+    .modal-body h3 {
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+    .modal-body p {
+      margin-top: 2px;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .modal-body ul {
+      padding-left: 18px;
+      margin-top: 2px;
+      margin-bottom: 8px;
+    }
+    .modal-body li {
+      margin-bottom: 3px;
+    }
+    .modal-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    @media (max-width: 720px) {
+      .top-nav { padding-inline: 12px; }
+      .page-wrapper { padding-inline: 12px; }
+      .card { padding-inline: 20px; border-radius: 24px; }
+      .bg-hero { display: none; }
+      .nav-right { gap: 6px; }
+      .modal-card { max-width: 95%; max-height: 85vh; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="bg-hero"></div>
+
+  <header class="top-nav">
+    <div class="brand">
+      <img
+        class="brand-logo-img"
+        src="https://3fcampus.tau.edu.tr/uploads/cms/pr.tau/dgFfmceK6A.png"
+        alt="Türk-Alman Üniversitesi Logosu"
+      />
+      <div>
+        <div class="brand-text-main">Türk-Alman Üniversitesi</div>
+        <div class="brand-text-sub" id="brandSub">Yemekhane Ödeme Sistemi</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span id="navCampusCard" class="nav-pill">CampusCard</span>
+      <span class="nav-pill" id="navSecureLogin">Güvenli Giriş</span>
+      <button type="button" id="themeToggle" class="nav-pill nav-toggle">
+        🌙 Dark mode
+      </button>
+      <button type="button" id="langToggle" class="nav-pill nav-toggle">
+        🇹🇷 TR
+      </button>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <section class="card">
+      <div class="card-header">
+        <div class="tagline" id="tagline">TAÜ · Yemekhane</div>
+        <h1 class="title" id="mainTitle">Giriş yap veya yeni bir kampüs hesabı oluştur.</h1>
+        <p class="subtitle" id="subtitle">
+          TAÜ öğrenci veya personel e-postan ile giriş yapabilir; yemek bakiyeni yönetebilir, yükleme yapabilir ve son işlemlerini görebilirsin.
+        </p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="login" id="tabLogin">Giriş Yap</button>
+        <button class="tab" data-tab="register" id="tabRegister">Kayıt Ol</button>
+      </div>
+
+      <!-- Giriş Formu -->
+      <form id="loginForm" class="auth-form active">
+        <div class="form-group">
+          <label class="label" for="loginEmail" id="labelLoginEmail">E-posta</label>
+          <input
+            class="input"
+            type="email"
+            id="loginEmail"
+            placeholder="ogrenci.no@tau.edu.tr"
+            autocomplete="username"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="label" for="loginPassword" id="labelLoginPassword">Şifre</label>
+          <input
+            class="input"
+            type="password"
+            id="loginPassword"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+        <div class="actions-row">
+          <button type="submit" class="btn btn-primary" id="loginSubmitBtn">Giriş Yap</button>
+          <button type="button" class="btn btn-secondary" id="forgotBtn">
+            Şifremi Unuttum
+          </button>
+        </div>
+      </form>
+
+      <!-- Kayıt Formu -->
+      <form id="registerForm" class="auth-form">
+        <div class="form-group">
+          <label class="label" for="regName" id="regNameLabel">Ad Soyad</label>
+          <input
+            class="input"
+            type="text"
+            id="regName"
+            placeholder="Adın Soyadın"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="label" for="regStudentNo" id="regStudentNoLabel">Öğrenci No (opsiyonel)</label>
+          <input
+            class="input"
+            type="text"
+            id="regStudentNo"
+            placeholder="2020xxxxxx"
+          />
+        </div>
+        <div class="form-group">
+          <label class="label" for="regEmail" id="regEmailLabel">TAÜ E-posta</label>
+          <input
+            class="input"
+            type="email"
+            id="regEmail"
+            placeholder="ogrenci.no@tau.edu.tr"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="label" for="regPassword" id="regPasswordLabel">Şifre</label>
+          <input
+            class="input"
+            type="password"
+            id="regPassword"
+            placeholder="En az 6 karakter"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label class="label" for="regPassword2" id="regPassword2Label">Şifre (Tekrar)</label>
+          <input
+            class="input"
+            type="password"
+            id="regPassword2"
+            placeholder="Şifreni tekrar yaz"
+            required
+          />
+        </div>
+
+        <!-- Sözleşme kısmı -->
+        <div class="form-group">
+          <div class="checkbox-row">
+            <button type="button" class="link-button" id="contractOpenBtn">
+              Yemek bakiyesi sözleşmesini oku
+            </button>
+            <label class="checkbox-label">
+              <input type="checkbox" id="contractAccept" />
+              <span id="contractAcceptText">
+                Yemek bakiyesi sözleşmesini okudum ve kabul ediyorum.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button type="submit" class="btn btn-primary" id="registerSubmitBtn">Kayıt Ol</button>
+          <span style="font-size:12px;color:var(--subtle);" id="registerInfoText">
+            Kayıt olmadan önce yemek bakiyesi sözleşmesini okuman ve kabul etmen gerekir.
+          </span>
+        </div>
+      </form>
+
+      <div id="authMessage" class="auth-message"></div>
+    </section>
+  </main>
+
+  <!-- SÖZLEŞME MODALI -->
+  <div id="contractBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="contractTitle">
+          TAÜ Yemekhane · Yemek Bakiyesi Sözleşmesi
+        </div>
+        <button type="button" id="contractCloseBtn" class="modal-close-btn">Kapat</button>
+      </div>
+      <div class="modal-body">
+        <h3>1. Amaç ve kapsam</h3>
+        <p>
+          Bu sözleşme, Türk-Alman Üniversitesi (TAÜ) yemekhane hizmetlerinde kullanılan
+          dijital yemek bakiyesi sisteminin (“Sistem”) kullanımına ilişkin usul ve esasları
+          belirlemek amacıyla hazırlanmıştır. Sistem, öğrencilerin ve personelin kampüs
+          içerisindeki yemekhanelerde nakit para taşımaksızın ödeme yapabilmesini sağlar.
+        </p>
+
+        <h3>2. Hesap oluşturma ve kimlik doğrulama</h3>
+        <ul>
+          <li>Sisteme yalnızca TAÜ tarafından verilmiş kurumsal e-posta adresleri ile kayıt olunabilir.</li>
+          <li>Kullanıcı, kayıt sırasında beyan ettiği tüm bilgilerin doğru ve güncel olduğunu kabul eder.</li>
+          <li>Hesap şifresinin güvenliğini sağlamak, tamamen kullanıcının sorumluluğundadır.</li>
+        </ul>
+
+        <h3>3. Bakiye yükleme ve kullanım</h3>
+        <ul>
+          <li>Yemek bakiyesi, sadece TAÜ yemekhane ve ilgili kampüs içi satış noktalarında kullanılmak üzere tanımlanır.</li>
+          <li>Bakiye, kullanıcı hesabına tanımlandıktan sonra yalnızca yemek ve ilgili hizmet alımlarında kullanılabilir; üçüncü kişilere devredilemez veya nakde çevrilemez.</li>
+          <li>Premium üyelik, paket alımı ve benzeri avantajlar, Sistem üzerinde belirtilen şart ve koşullara tabidir.</li>
+        </ul>
+
+        <h3>4. İade ve iptal koşulları</h3>
+        <ul>
+          <li>Yapılmış bir yemek harcamasının, hizmetin fiilen sunulmasından sonra iadesi kural olarak mümkün değildir.</li>
+          <li>Yanlış yükleme, teknik hata veya mükerrer işlem durumlarında, kullanıcı ilgili birime başvurarak inceleme talep edebilir.</li>
+        </ul>
+
+        <h3>5. Kişisel verilerin korunması</h3>
+        <ul>
+          <li>Yemek bakiyesi sistemi kapsamındaki kişisel veriler, yalnızca hizmetin sunulması, iyileştirilmesi ve yasal yükümlülüklerin yerine getirilmesi amacıyla işlenir.</li>
+          <li>Kullanıcı, sistem kullanımına devam ederek, kişisel verilerinin bu amaçlarla işlenebileceğini kabul eder.</li>
+        </ul>
+
+        <h3>6. Sorumluluk sınırı</h3>
+        <ul>
+          <li>Sistem geçici bakım, güncelleme veya öngörülemeyen teknik sebeplerle zaman zaman kullanılamaz hale gelebilir.</li>
+          <li>Kullanıcı, makul teknik önlemler alınmış olmak kaydıyla, Sistem’in kesintisiz çalışacağına dair bir garanti verilmediğini kabul eder.</li>
+        </ul>
+
+        <h3>7. Değişiklikler ve yürürlük</h3>
+        <ul>
+          <li>Bu sözleşme hükümleri, gerekli görülmesi halinde güncellenebilir veya değiştirilebilir.</li>
+          <li>Güncel metin Sistem üzerinde yayınlandığı andan itibaren geçerlidir; kullanıcı Sistemi kullanmaya devam ederek yeni şartları kabul etmiş sayılır.</li>
+        </ul>
+
+        <p style="margin-top:10px;font-size:11px;opacity:0.8;">
+          Not: Bu metin örnek niteliğinde bir taslaktır. Üniversitenin resmi metni
+          ile çelişmesi halinde, resmi metin esas alınır.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <span id="contractFooterText">Sözleşmeyi inceledikten sonra kabul edebilirsin.</span>
+        <button type="button" id="contractAcceptBtn" class="btn btn-primary" style="font-size:13px;">
+          Kabul Ediyorum
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const bodyEl = document.body;
+    const themeToggleBtn = document.getElementById("themeToggle");
+
+    function applyTheme(theme) {
+      bodyEl.dataset.theme = theme;
+      if (themeToggleBtn) {
+        if (theme === "dark") {
+          themeToggleBtn.textContent = "☀️ Light mode";
+        } else {
+          themeToggleBtn.textContent = "🌙 Dark mode";
+        }
+      }
+    }
+
+    (function initTheme() {
+      try {
+        const saved = localStorage.getItem("tau-theme");
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initial = saved || (prefersDark ? "dark" : "light");
+        applyTheme(initial);
+      } catch (e) {
+        applyTheme("light");
+      }
+    })();
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const next = bodyEl.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(next);
+        try {
+          localStorage.setItem("tau-theme", next);
+        } catch (e) {}
+      });
+    }
+
+    // --- i18n (TR / DE) ---
+    const translations = {
+      tr: {
+        brandSub: "Yemekhane Ödeme Sistemi",
+        tagline: "TAÜ · Yemekhane",
+        title: "Giriş yap veya yeni bir kampüs hesabı oluştur.",
+        subtitle:
+          "TAÜ öğrenci veya personel e-postan ile giriş yapabilir; yemek bakiyeni yönetebilir, yükleme yapabilir ve son işlemlerini görebilirsin.",
+        navCampusCard: "CampusCard",
+        navSecureLogin: "Güvenli Giriş",
+        tabLogin: "Giriş Yap",
+        tabRegister: "Kayıt Ol",
+        labelLoginEmail: "E-posta",
+        labelLoginPassword: "Şifre",
+        loginEmailPlaceholder: "ogrenci.no@tau.edu.tr",
+        loginPasswordPlaceholder: "••••••••",
+        loginBtn: "Giriş Yap",
+        forgotBtn: "Şifremi Unuttum",
+        regNameLabel: "Ad Soyad",
+        regNamePlaceholder: "Adın Soyadın",
+        regStudentNoLabel: "Öğrenci No (opsiyonel)",
+        regStudentNoPlaceholder: "2020xxxxxx",
+        regEmailLabel: "TAÜ E-posta",
+        regEmailPlaceholder: "ogrenci.no@tau.edu.tr",
+        regPasswordLabel: "Şifre",
+        regPasswordPlaceholder: "En az 6 karakter",
+        regPassword2Label: "Şifre (Tekrar)",
+        regPassword2Placeholder: "Şifreni tekrar yaz",
+        registerInfoText:
+          "Kayıt olmadan önce yemek bakiyesi sözleşmesini okuman ve kabul etmen gerekir.",
+        loginProcessing: "Giriş yapılıyor...",
+        loginSuccess: "Giriş başarılı, panel açılıyor...",
+        loginErrorGeneric: "Giriş başarısız.",
+        registerProcessing: "Hesap oluşturuluyor...",
+        registerSuccess: "Hesap oluşturuldu, panel açılıyor...",
+        registerErrorGeneric: "Kayıt başarısız.",
+        passwordMismatch: "Şifreler eşleşmiyor.",
+        networkError: "Sunucuya bağlanırken hata oluştu.",
+        forgotInfo:
+          "Şifremi unuttum akışı bu demo’da pasif. Gerçekte e-posta ile sıfırlama linki gönderebilirsin.",
+        contractOpen: "Yemek bakiyesi sözleşmesini oku",
+        contractAcceptLabel:
+          "Yemek bakiyesi sözleşmesini okudum ve kabul ediyorum.",
+        contractRequired:
+          "Kayıt olmak için yemek bakiyesi sözleşmesini kabul etmelisin.",
+        contractTitle: "TAÜ Yemekhane · Yemek Bakiyesi Sözleşmesi",
+        contractFooterText:
+          "Sözleşmeyi inceledikten sonra kabul edebilirsin.",
+      },
+      de: {
+        brandSub: "Mensa-Bezahlsystem",
+        tagline: "TAU · Mensa",
+        title: "Melde dich an oder erstelle ein neues Campus-Konto.",
+        subtitle:
+          "Du kannst dich mit deiner TAU-Studierenden- oder Mitarbeiter-E-Mail anmelden, dein Mensa-Guthaben verwalten, Aufladungen durchführen und deine letzten Transaktionen sehen.",
+        navCampusCard: "CampusCard",
+        navSecureLogin: "Sichere Anmeldung",
+        tabLogin: "Anmelden",
+        tabRegister: "Registrieren",
+        labelLoginEmail: "E-Mail",
+        labelLoginPassword: "Passwort",
+        loginEmailPlaceholder: "studiennummer@tau.edu.tr",
+        loginPasswordPlaceholder: "••••••••",
+        loginBtn: "Anmelden",
+        forgotBtn: "Passwort vergessen",
+        regNameLabel: "Vor- und Nachname",
+        regNamePlaceholder: "Dein Name",
+        regStudentNoLabel: "Matrikelnummer (optional)",
+        regStudentNoPlaceholder: "2020xxxxxx",
+        regEmailLabel: "TAU-E-Mail",
+        regEmailPlaceholder: "studiennummer@tau.edu.tr",
+        regPasswordLabel: "Passwort",
+        regPasswordPlaceholder: "Mindestens 6 Zeichen",
+        regPassword2Label: "Passwort (Wiederholen)",
+        regPassword2Placeholder: "Passwort erneut eingeben",
+        registerInfoText:
+          "Bitte lies den Mensa-Guthabenvertrag und akzeptiere ihn, bevor du dich registrierst.",
+        loginProcessing: "Anmeldung läuft...",
+        loginSuccess: "Anmeldung erfolgreich, das Panel wird geöffnet...",
+        loginErrorGeneric: "Anmeldung fehlgeschlagen.",
+        registerProcessing: "Konto wird erstellt...",
+        registerSuccess: "Konto erstellt, das Panel wird geöffnet...",
+        registerErrorGeneric: "Registrierung fehlgeschlagen.",
+        passwordMismatch: "Die Passwörter stimmen nicht überein.",
+        networkError:
+          "Beim Verbinden mit dem Server ist ein Fehler aufgetreten.",
+        forgotInfo:
+          "Der „Passwort vergessen“-Ablauf ist in dieser Demo deaktiviert. In echt könntest du hier einen Link per E-Mail versenden.",
+        contractOpen: "Mensa-Guthabenvertrag lesen",
+        contractAcceptLabel:
+          "Ich habe den Mensa-Guthabenvertrag gelesen und akzeptiere ihn.",
+        contractRequired:
+          "Du musst den Mensa-Guthabenvertrag akzeptieren, um dich zu registrieren.",
+        contractTitle: "TAU Mensa · Guthabenvereinbarung",
+        contractFooterText:
+          "Lies dir den Vertrag durch und bestätige ihn anschließend.",
+      }
+    };
+
+    let currentLang = "tr";
+    const langToggleBtn = document.getElementById("langToggle");
+
+    function t(key) {
+      const dict = translations[currentLang] || translations.tr;
+      return dict[key] || key;
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang === "de" ? "de" : "tr";
+      const dict = translations[lang] || translations.tr;
+      const el = (id) => document.getElementById(id);
+
+      if (el("brandSub")) el("brandSub").textContent = dict.brandSub;
+      if (el("tagline")) el("tagline").textContent = dict.tagline;
+      if (el("mainTitle")) el("mainTitle").textContent = dict.title;
+      if (el("subtitle")) el("subtitle").textContent = dict.subtitle;
+
+      if (el("navCampusCard")) el("navCampusCard").textContent = dict.navCampusCard;
+      if (el("navSecureLogin")) el("navSecureLogin").textContent = dict.navSecureLogin;
+
+      if (el("tabLogin")) el("tabLogin").textContent = dict.tabLogin;
+      if (el("tabRegister")) el("tabRegister").textContent = dict.tabRegister;
+
+      if (el("labelLoginEmail")) el("labelLoginEmail").textContent = dict.labelLoginEmail;
+      if (el("labelLoginPassword")) el("labelLoginPassword").textContent = dict.labelLoginPassword;
+
+      const loginEmailInput = el("loginEmail");
+      if (loginEmailInput) loginEmailInput.placeholder = dict.loginEmailPlaceholder;
+      const loginPasswordInput = el("loginPassword");
+      if (loginPasswordInput) loginPasswordInput.placeholder = dict.loginPasswordPlaceholder;
+
+      const loginBtnEl = el("loginSubmitBtn");
+      if (loginBtnEl) loginBtnEl.textContent = dict.loginBtn;
+      const forgotBtnEl = el("forgotBtn");
+      if (forgotBtnEl) forgotBtnEl.textContent = dict.forgotBtn;
+
+      if (el("regNameLabel")) el("regNameLabel").textContent = dict.regNameLabel;
+      const regNameInput = el("regName");
+      if (regNameInput) regNameInput.placeholder = dict.regNamePlaceholder;
+
+      if (el("regStudentNoLabel")) el("regStudentNoLabel").textContent = dict.regStudentNoLabel;
+      const regStudentNoInput = el("regStudentNo");
+      if (regStudentNoInput) regStudentNoInput.placeholder = dict.regStudentNoPlaceholder;
+
+      if (el("regEmailLabel")) el("regEmailLabel").textContent = dict.regEmailLabel;
+      const regEmailInput = el("regEmail");
+      if (regEmailInput) regEmailInput.placeholder = dict.regEmailPlaceholder;
+
+      if (el("regPasswordLabel")) el("regPasswordLabel").textContent = dict.regPasswordLabel;
+      const regPasswordInput = el("regPassword");
+      if (regPasswordInput) regPasswordInput.placeholder = dict.regPasswordPlaceholder;
+
+      if (el("regPassword2Label")) el("regPassword2Label").textContent = dict.regPassword2Label;
+      const regPassword2Input = el("regPassword2");
+      if (regPassword2Input) regPassword2Input.placeholder = dict.regPassword2Placeholder;
+
+      if (el("registerSubmitBtn")) el("registerSubmitBtn").textContent = dict.tabRegister;
+      if (el("registerInfoText")) el("registerInfoText").textContent = dict.registerInfoText;
+
+      if (el("contractOpenBtn")) el("contractOpenBtn").textContent = dict.contractOpen;
+      if (el("contractAcceptText")) el("contractAcceptText").textContent = dict.contractAcceptLabel;
+      if (el("contractTitle")) el("contractTitle").textContent = dict.contractTitle;
+      if (el("contractFooterText")) el("contractFooterText").textContent = dict.contractFooterText;
+
+      if (langToggleBtn) {
+        langToggleBtn.textContent = lang === "tr" ? "🇹🇷 TR" : "🇩🇪 DE";
+      }
+    }
+
+    (function initLang() {
+      try {
+        const saved = localStorage.getItem("tau-lang");
+        const initial = saved === "de" ? "de" : "tr";
+        applyLanguage(initial);
+      } catch (e) {
+        applyLanguage("tr");
+      }
+    })();
+
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener("click", () => {
+        const next = currentLang === "tr" ? "de" : "tr";
+        applyLanguage(next);
+        try {
+          localStorage.setItem("tau-lang", next);
+        } catch (e) {}
+      });
+    }
+
+    // Tab geçişleri
+    const tabs = document.querySelectorAll(".tab");
+    const forms = document.querySelectorAll(".auth-form");
+    const authMsg = document.getElementById("authMessage");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = tab.dataset.tab;
+        forms.forEach((form) => {
+          form.classList.toggle("active", form.id === target + "Form");
+        });
+        authMsg.textContent = "";
+        authMsg.className = "auth-message";
+      });
+    });
+
+    function showMessage(text, type = "info") {
+      authMsg.textContent = text;
+      authMsg.className = "auth-message " + (type === "error" ? "error" : "success");
+    }
+
+    // Login
+    const loginForm = document.getElementById("loginForm");
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      showMessage(t("loginProcessing"));
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showMessage(data.error || t("loginErrorGeneric"), "error");
+          return;
+        }
+        showMessage(t("loginSuccess"), "success");
+        window.location.href = "/panel.html";
+      } catch (err) {
+        showMessage(t("networkError"), "error");
+      }
+    });
+
+    // Register
+    const regForm = document.getElementById("registerForm");
+    const contractAcceptCheckbox = document.getElementById("contractAccept");
+
+    regForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      showMessage(t("registerProcessing"));
+      const name = document.getElementById("regName").value.trim();
+      const studentNo = document.getElementById("regStudentNo").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const password2 = document.getElementById("regPassword2").value;
+
+      if (password !== password2) {
+        showMessage(t("passwordMismatch"), "error");
+        return;
+      }
+
+      if (!contractAcceptCheckbox.checked) {
+        showMessage(t("contractRequired"), "error");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, studentNo, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showMessage(data.error || t("registerErrorGeneric"), "error");
+          return;
+        }
+        showMessage(t("registerSuccess"), "success");
+        window.location.href = "/panel.html";
+      } catch (err) {
+        showMessage(t("networkError"), "error");
+      }
+    });
+
+    // Şifremi unuttum (demo)
+    document.getElementById("forgotBtn").addEventListener("click", () => {
+      showMessage(t("forgotInfo"), "error");
+    });
+
+    // Sözleşme modalı
+    const contractBackdrop = document.getElementById("contractBackdrop");
+    const contractOpenBtn = document.getElementById("contractOpenBtn");
+    const contractCloseBtn = document.getElementById("contractCloseBtn");
+    const contractAcceptBtn = document.getElementById("contractAcceptBtn");
+
+    function openContractModal() {
+      contractBackdrop.classList.add("visible");
+      contractBackdrop.setAttribute("aria-hidden", "false");
+    }
+    function closeContractModal() {
+      contractBackdrop.classList.remove("visible");
+      contractBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    if (contractOpenBtn) {
+      contractOpenBtn.addEventListener("click", openContractModal);
+    }
+    if (contractCloseBtn) {
+      contractCloseBtn.addEventListener("click", closeContractModal);
+    }
+    if (contractBackdrop) {
+      contractBackdrop.addEventListener("click", (e) => {
+        if (e.target === contractBackdrop) {
+          closeContractModal();
+        }
+      });
+    }
+    if (contractAcceptBtn) {
+      contractAcceptBtn.addEventListener("click", () => {
+        contractAcceptCheckbox.checked = true;
+        closeContractModal();
+      });
+    }
+        // --- GÜNÜN MESAJI (Random quote API) ---
+
+    async function loadDailyMessage() {
+      const dailyTextInner = document.getElementById("dailyTextInner");
+      const dailyLoader = document.getElementById("dailyLoader");
+      if (!dailyTextInner) return;
+
+      // İlk açılışta localized "Yükleniyor..." / "Wird geladen..."
+      dailyTextInner.textContent = t("dailyLoading");
+      if (dailyLoader) dailyLoader.style.display = "inline-block";
+
+      try {
+        // Basit, auth istemeyen bir API: https://api.quotable.io
+        const res = await fetch(
+          "https://api.quotable.io/random?tags=inspirational|happiness|wisdom"
+        );
+        if (!res.ok) throw new Error("Bad status");
+        const data = await res.json();
+
+        const text = data.content;
+        const author = data.author;
+
+        dailyTextInner.textContent = text + (author ? " — " + author : "");
+        dailyTextInner.dataset.hasQuote = "1";
+        if (dailyLoader) dailyLoader.style.display = "none";
+      } catch (err) {
+        // İnternet yok / okul ağı dış isteği bloklarsa:
+        dailyTextInner.textContent = t("dailyError");
+        if (dailyLoader) dailyLoader.style.display = "none";
+      }
+    }
+
+    // Sayfa yüklendiğinde çağır
+    document.addEventListener("DOMContentLoaded", loadDailyMessage);
+</script>
+</body>
+</html>

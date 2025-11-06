@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAÜ Yemekhane · Hesap Bilgileri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --subtle: #6e6e73;
+      --border-soft: rgba(0,0,0,0.08);
+      --shadow-soft: 0 20px 50px rgba(0,0,0,0.08);
+      --premium-gold: #f5b400;
+      --bg-soft: #f5f5f7;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        system-ui, -system-ui, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0, #f5f5f7 45%, #e5e5ea 100%);
+      color: var(--ink);
+      position: relative;
+      overflow-x: hidden;
+      transition: background 280ms ease;
+    }
+
+    /* Premium modunda arka planı hafif altın tonuna çek */
+    body.premium-active {
+      background: radial-gradient(circle at top, #fff9e5 0, #f7f3e5 45%, #eee2c8 100%);
+    }
+
+    .bg-hero {
+      position: fixed;
+      right: -140px;
+      top: -80px;
+      width: 620px;
+      height: 620px;
+      background-image: url("campus-hero.jpg");
+      background-size: cover;
+      background-position: center;
+      filter: blur(20px) saturate(1.05);
+      opacity: 0.35;
+      transform: rotate(-4deg);
+      pointer-events: none;
+      z-index: -1;
+      border-radius: 50%;
+      mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+    }
+
+    .top-nav {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--subtle);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo-img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .brand-text-main {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #1d1d1f;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.9);
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #1d1d1f;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 150ms ease, box-shadow 150ms ease, transform 120ms ease;
+    }
+    .btn-ghost:hover {
+      background: #f5f5f7;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    .btn-ghost.small {
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .page-wrapper {
+      max-width: 1100px;
+      margin: 22px auto 40px;
+      padding: 0 20px 40px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 26px;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+      margin: 0 0 4px;
+      color: #1d1d1f;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--subtle);
+      max-width: 520px;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34c759;
+    }
+    .status-pill.premium {
+      background: linear-gradient(135deg,#f5e0a3,#ffe48a);
+      border-color: rgba(0,0,0,0.08);
+      color: #3a2a00;
+    }
+    .status-pill.premium .status-dot {
+      background: #fff;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1.4fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 26px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 22px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 220ms ease, box-shadow 220ms ease, transform 180ms ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -80px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0,113,227,0.06) 0, transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(39,174,96,0.06) 0, transparent 55%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* PREMIUM GLOW ANİMASYONU */
+    @keyframes premiumGlowBorder {
+      0% {
+        box-shadow: 0 12px 28px rgba(245,180,0,0.30);
+      }
+      50% {
+        box-shadow: 0 18px 42px rgba(245,180,0,0.60);
+      }
+      100% {
+        box-shadow: 0 12px 28px rgba(245,180,0,0.30);
+      }
+    }
+
+    .premium-glow-card {
+      border-color: rgba(245,180,0,0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(245,180,0,0.50);
+    }
+    .premium-glow-card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(245,180,0,0.8), rgba(255,245,200,0.15));
+      mix-blend-mode: soft-light;
+      opacity: 0.65;
+      pointer-events: none;
+      animation: premiumGlowBorder 2.6s ease-in-out infinite;
+    }
+
+    /* Avatar için premium halka */
+    @keyframes premiumAvatarPulse {
+      0% {
+        box-shadow:
+          0 0 0 0 rgba(245,180,0,0.9),
+          0 0 18px rgba(245,180,0,0.7);
+      }
+      50% {
+        box-shadow:
+          0 0 0 2px rgba(245,180,0,1),
+          0 0 32px rgba(245,180,0,1);
+      }
+      100% {
+        box-shadow:
+          0 0 0 0 rgba(245,180,0,0.9),
+          0 0 18px rgba(245,180,0,0.7);
+      }
+    }
+
+    .premium-avatar-ring {
+      position: relative;
+      box-shadow:
+        0 0 0 2px rgba(245,180,0,0.95),
+        0 0 26px rgba(245,180,0,0.95);
+      animation: premiumAvatarPulse 2.4s ease-in-out infinite;
+    }
+    .premium-avatar-ring::after {
+      content: "★";
+      position: absolute;
+      right: -4px;
+      bottom: -2px;
+      font-size: 14px;
+      background: radial-gradient(circle at 30% 0%, #fff7cf 0, #f5b400 60%);
+      border-radius: 999px;
+      padding: 2px 5px;
+      box-shadow: 0 0 10px rgba(245,180,0,0.9);
+    }
+
+    .card-header {
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      letter-spacing: -0.02em;
+      color: #1d1d1f;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    .profile-avatar-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#0071e3,#34c759);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 20px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+    .profile-avatar-title {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .profile-avatar-sub {
+      font-size: 11px;
+      color: var(--subtle);
+      margin-bottom: 4px;
+    }
+    .profile-avatar-block input[type="file"] {
+      display: none;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+    .profile-label {
+      color: var(--subtle);
+    }
+    .profile-value {
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .plan-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .plan-card {
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: #f5f5f7;
+      padding: 12px 12px 10px;
+      font-size: 12px;
+    }
+    .plan-card.premium {
+      background: linear-gradient(135deg,#f5b400,#ffdf80);
+      color: #3a2a00;
+      border-color: rgba(0,0,0,0.12);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+    }
+    .plan-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+    .plan-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .price {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .price span {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-left: 2px;
+    }
+
+    .features-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+    }
+    .features-list li {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .feat-icon {
+      font-size: 12px;
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .compare-table {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.06);
+      overflow: hidden;
+      font-size: 12px;
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      padding: 6px 10px;
+      align-items: center;
+    }
+    .compare-row:nth-child(odd) {
+      background: rgba(0,0,0,0.015);
+    }
+    .compare-head {
+      background: #f5f5f7;
+      font-weight: 600;
+    }
+    .compare-cell-muted {
+      color: var(--subtle);
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-primary {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      outline: none;
+      background: linear-gradient(135deg,#00b341,#27ae60);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(4,182,80,0.45);
+      transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 38px rgba(4,182,80,0.55);
+    }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .info-line {
+      font-size: 11px;
+      color: var(--subtle);
+      margin-top: 4px;
+    }
+
+    /* PREMIUM EKSTRALARI BAR'I */
+    .premium-extras {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: rgba(245, 180, 0, 0.08);
+      border: 1px dashed rgba(245, 180, 0, 0.7);
+      font-size: 11px;
+    }
+    .premium-extra-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .premium-extra-item:last-child {
+      margin-bottom: 0;
+    }
+    .extra-icon {
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .extra-text {
+      flex: 1;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 720px) {
+      .top-nav { padding-inline: 12px; }
+      .page-wrapper { padding-inline: 12px; }
+      .card { border-radius: 22px; }
+      .plan-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-hero"></div>
+
+  <header class="top-nav">
+    <div class="brand">
+      <img
+        class="brand-logo-img"
+        src="https://3fcampus.tau.edu.tr/uploads/cms/pr.tau/dgFfmceK6A.png"
+        alt="Türk-Alman Üniversitesi Logosu"
+      />
+      <div>
+        <div class="brand-text-main">Türk-Alman Üniversitesi</div>
+        <div class="brand-text-sub" id="brandSub">Yemekhane · Hesap Merkezi</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost" id="langToggle">🇹🇷 TR</button>
+      <button class="btn-ghost" id="currencyToggle">₺ → €</button>
+      <button class="btn-ghost" id="backToPanel">
+        ← Panele Dön
+      </button>
+      <button class="btn-ghost" id="logoutBtn">
+        Çıkış Yap
+      </button>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" id="pageTitle">Hesap bilgilerin.</h1>
+        <p class="page-subtitle" id="pageSubtitle">
+          İsim, öğrenci numaran, e-posta ve Premium durumun tek ekranda.
+          Değişiklik gerektiğinde öğrenci işleri veya yemekhane ofisi ile iletişime geçebilirsin.
+        </p>
+      </div>
+      <div id="statusPill" class="status-pill">
+        <span class="status-dot"></span>
+        <span id="statusText">Standart hesap</span>
+      </div>
+    </div>
+
+    <section class="layout">
+      <!-- Sol: Profil bilgileri -->
+      <section class="card" id="profileCard">
+        <div class="card-header">
+          <h2 class="card-title" id="profileTitle">Profil Özeti</h2>
+          <p class="card-subtitle" id="profileSubtitle">
+            TAÜ yemekhane sistemi üzerinde kayıtlı temel bilgiler.
+          </p>
+        </div>
+
+        <div class="profile-avatar-block">
+          <div class="profile-avatar" id="avatarPreview">
+            <span id="avatarInitials">--</span>
+          </div>
+          <div>
+            <div class="profile-avatar-title" id="avatarTitle">Profil fotoğrafı</div>
+            <div class="profile-avatar-sub" id="avatarSub">
+              Sadece bu cihazda saklanır, sunucuya yüklenmez (demo).
+            </div>
+            <label class="btn-ghost small">
+              <input type="file" id="photoInput" accept="image/*" />
+              <span id="avatarButtonLabel">Fotoğraf Seç</span>
+            </label>
+            <div class="info-line" id="photoNote"></div>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-row">
+            <span class="profile-label" id="labelName">İsim Soyisim</span>
+            <span class="profile-value" id="profileName">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label" id="labelStudentNo">Öğrenci No</span>
+            <span class="profile-value" id="profileStudentNo">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label" id="labelEmail">E-posta</span>
+            <span class="profile-value" id="profileEmail">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label" id="labelPremium">Premium Durumu</span>
+            <span class="profile-value" id="profilePremium">—</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label" id="labelCreated">Sisteme Kayıt</span>
+            <span class="profile-value" id="profileCreatedAt">—</span>
+          </div>
+        </div>
+
+        <div class="info-line" id="profileHint">
+          Bu bilgiler demo amaçlı gösterilir. Gerçek sistemde değişiklikler öğrenci işleri
+          ve yemekhane birimi tarafından yönetilir.
+        </div>
+      </section>
+
+      <!-- Sağ: Premium karşılaştırma -->
+      <section class="card" id="compareCard">
+        <div class="card-header">
+          <h2 class="card-title" id="compareTitle">Premium ile karşılaştır.</h2>
+          <p class="card-subtitle" id="compareSubtitle">
+            Standart hesabın ile TAÜ Yemekhane Premium arasındaki farkları incele.
+          </p>
+        </div>
+
+        <div class="plan-layout">
+          <div class="plan-card">
+            <div class="plan-label" id="currentPlanLabel">Mevcut Planın</div>
+            <div class="plan-name" id="currentPlanName">Standart Hesap</div>
+            <div class="price">
+              <span id="stdPriceMain">Ücretsiz</span><span id="stdPriceSuffix"> · Varsayılan</span>
+            </div>
+            <ul class="features-list">
+              <li>
+                <span class="feat-icon">•</span>
+                <span id="stdFeat1Text">Yemeklerde standart fiyat (60 TL / öğün)</span>
+              </li>
+              <li>
+                <span class="feat-icon">•</span>
+                <span id="stdFeat2Text">Online bakiye görüntüleme</span>
+              </li>
+              <li>
+                <span class="feat-icon">•</span>
+                <span id="stdFeat3Text">QR ile ödeme oluşturma</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="plan-card premium" id="premiumPlanCard">
+            <div class="plan-label" id="premiumPlanLabel">Önerilen</div>
+            <div class="plan-name" id="premiumPlanName">Yemekhane Premium</div>
+            <div class="price">
+              <span id="premiumPriceMain">₺ 299</span><span id="premiumPriceSuffix">/ay</span>
+            </div>
+            <ul class="features-list">
+              <li>
+                <span class="feat-icon">✨</span>
+                <span id="premFeat1Text">Yemeklerde %25 indirim (60 → 45 TL)</span>
+              </li>
+              <li>
+                <span class="feat-icon">⚡</span>
+                <span id="premFeat2Text">Yoğun saatlerde öncelikli geçiş kuyruğu*</span>
+              </li>
+              <li>
+                <span class="feat-icon">📊</span>
+                <span id="premFeat3Text">Aylık detaylı harcama breakdown’ı</span>
+              </li>
+              <li>
+                <span class="feat-icon">⭐</span>
+                <span id="premFeat4Text">Öncelikli destek & geri bildirim hattı</span>
+              </li>
+              <li>
+                <span class="feat-icon">🎧</span>
+                <span id="premFeat5Text">“Mensa Chill” özel Spotify playlist linki</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="compare-table">
+          <div class="compare-row compare-head">
+            <div id="cmpHeadFeature">Özellik</div>
+            <div id="cmpHeadStandard">Standart</div>
+            <div id="cmpHeadPremium">Premium</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpPriceLabel">Öğün fiyatı</div>
+            <div id="cmpPriceStd">₺ 60</div>
+            <div id="cmpPricePrem">₺ 45</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpFeeLabel">Aylık üyelik ücreti</div>
+            <div id="cmpFeeStd">₺ 0</div>
+            <div id="cmpFeePrem">₺ 299</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpQueueLabel">Yoğun saat önceliği</div>
+            <div id="cmpQueueStd">Yok</div>
+            <div id="cmpQueuePrem">Var</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpReportLabel">Ayrıntılı harcama raporu</div>
+            <div id="cmpReportStd">Özet seviye</div>
+            <div id="cmpReportPrem">Tam detaylı</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpSupportLabel">Destek hattı</div>
+            <div id="cmpSupportStd">Standart</div>
+            <div id="cmpSupportPrem">Öncelikli</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-cell-muted" id="cmpChillLabel">Chill perk</div>
+            <div id="cmpChillStd">Genel playlist</div>
+            <div id="cmpChillPrem">Ekstra “Premium Chill” playlist</div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <span class="info-line" id="upgradeInfo">
+            *Öncelikli geçiş, gerçek sistem devreye alındığında üniversite kuralları çerçevesinde uygulanır.
+          </span>
+          <button id="upgradeBtn" class="btn-primary">
+            Premium'a Geç
+          </button>
+        </div>
+
+        <div class="info-line" id="upgradeStatus"></div>
+
+        <!-- PREMIUM EKSTRA PERKLER (sadece premium olduğunda gösteriliyor) -->
+        <div id="premiumExtras" class="premium-extras" style="display:none;">
+          <div class="premium-extra-item">
+            <span class="extra-icon">🎧</span>
+            <span class="extra-text" id="extraPlaylistText">
+              Premium Chill playlistine özel link, kayıtlı e-posta adresine gönderilir (demo).
+            </span>
+          </div>
+          <div class="premium-extra-item">
+            <span class="extra-icon">⚡</span>
+            <span class="extra-text" id="extraQueueText">
+              Yoğun saatlerde turnikelerde altın Premium rozetin tanımlı olur (gerçek sistemde).
+            </span>
+          </div>
+          <div class="premium-extra-item">
+            <span class="extra-icon">🏅</span>
+            <span class="extra-text" id="extraBadgeText">
+              Hesabına özel “Mensa Pro” profil rozeti eklenir ve panelde de görünür.
+            </span>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    // Sabitler
+    let EUR_RATE = 49;       // /api/me eurRate dönerse güncellenecek
+    const PREMIUM_TL = 299;
+    const MEAL_STANDARD_TL = 60;
+    const MEAL_PREMIUM_TL = 45;
+
+    let currentLang = "tr";
+    let currentCurrency = "TRY";
+    let currentUser = null;
+
+    // Elemanlar
+    const logoutBtn = document.getElementById("logoutBtn");
+    const backToPanelBtn = document.getElementById("backToPanel");
+    const langToggleBtn = document.getElementById("langToggle");
+    const currencyToggleBtn = document.getElementById("currencyToggle");
+
+    const statusPill = document.getElementById("statusPill");
+    const statusText = document.getElementById("statusText");
+
+    const brandSubEl = document.getElementById("brandSub");
+    const pageTitleEl = document.getElementById("pageTitle");
+    const pageSubtitleEl = document.getElementById("pageSubtitle");
+
+    const profileTitleEl = document.getElementById("profileTitle");
+    const profileSubtitleEl = document.getElementById("profileSubtitle");
+    const labelNameEl = document.getElementById("labelName");
+    const labelStudentNoEl = document.getElementById("labelStudentNo");
+    const labelEmailEl = document.getElementById("labelEmail");
+    const labelPremiumEl = document.getElementById("labelPremium");
+    const labelCreatedEl = document.getElementById("labelCreated");
+    const profileNameEl = document.getElementById("profileName");
+    const profileStudentNoEl = document.getElementById("profileStudentNo");
+    const profileEmailEl = document.getElementById("profileEmail");
+    const profilePremiumEl = document.getElementById("profilePremium");
+    const profileCreatedAtEl = document.getElementById("profileCreatedAt");
+    const profileHintEl = document.getElementById("profileHint");
+
+    const avatarPreview = document.getElementById("avatarPreview");
+    const avatarInitialsEl = document.getElementById("avatarInitials");
+    const avatarTitleEl = document.getElementById("avatarTitle");
+    const avatarSubEl = document.getElementById("avatarSub");
+    const avatarButtonLabelEl = document.getElementById("avatarButtonLabel");
+    const photoInput = document.getElementById("photoInput");
+    const photoNoteEl = document.getElementById("photoNote");
+
+    const profileCardEl = document.getElementById("profileCard");
+    const compareCardEl = document.getElementById("compareCard");
+
+    const currentPlanLabelEl = document.getElementById("currentPlanLabel");
+    const currentPlanNameEl = document.getElementById("currentPlanName");
+    const stdPriceMainEl = document.getElementById("stdPriceMain");
+    const stdPriceSuffixEl = document.getElementById("stdPriceSuffix");
+
+    const premiumPlanLabelEl = document.getElementById("premiumPlanLabel");
+    const premiumPlanNameEl = document.getElementById("premiumPlanName");
+    const premiumPriceMainEl = document.getElementById("premiumPriceMain");
+    const premiumPriceSuffixEl = document.getElementById("premiumPriceSuffix");
+
+    const stdFeat1TextEl = document.getElementById("stdFeat1Text");
+    const stdFeat2TextEl = document.getElementById("stdFeat2Text");
+    const stdFeat3TextEl = document.getElementById("stdFeat3Text");
+    const premFeat1TextEl = document.getElementById("premFeat1Text");
+    const premFeat2TextEl = document.getElementById("premFeat2Text");
+    const premFeat3TextEl = document.getElementById("premFeat3Text");
+    const premFeat4TextEl = document.getElementById("premFeat4Text");
+    const premFeat5TextEl = document.getElementById("premFeat5Text");
+
+    const compareTitleEl = document.getElementById("compareTitle");
+    const compareSubtitleEl = document.getElementById("compareSubtitle");
+    const cmpHeadFeatureEl = document.getElementById("cmpHeadFeature");
+    const cmpHeadStandardEl = document.getElementById("cmpHeadStandard");
+    const cmpHeadPremiumEl = document.getElementById("cmpHeadPremium");
+
+    const cmpPriceLabelEl = document.getElementById("cmpPriceLabel");
+    const cmpPriceStdEl = document.getElementById("cmpPriceStd");
+    const cmpPricePremEl = document.getElementById("cmpPricePrem");
+
+    const cmpFeeLabelEl = document.getElementById("cmpFeeLabel");
+    const cmpFeeStdEl = document.getElementById("cmpFeeStd");
+    const cmpFeePremEl = document.getElementById("cmpFeePrem");
+
+    const cmpQueueLabelEl = document.getElementById("cmpQueueLabel");
+    const cmpQueueStdEl = document.getElementById("cmpQueueStd");
+    const cmpQueuePremEl = document.getElementById("cmpQueuePrem");
+
+    const cmpReportLabelEl = document.getElementById("cmpReportLabel");
+    const cmpReportStdEl = document.getElementById("cmpReportStd");
+    const cmpReportPremEl = document.getElementById("cmpReportPrem");
+
+    const cmpSupportLabelEl = document.getElementById("cmpSupportLabel");
+    const cmpSupportStdEl = document.getElementById("cmpSupportStd");
+    const cmpSupportPremEl = document.getElementById("cmpSupportPrem");
+
+    const cmpChillLabelEl = document.getElementById("cmpChillLabel");
+    const cmpChillStdEl = document.getElementById("cmpChillStd");
+    const cmpChillPremEl = document.getElementById("cmpChillPrem");
+
+    const upgradeInfoEl = document.getElementById("upgradeInfo");
+    const upgradeBtn = document.getElementById("upgradeBtn");
+    const upgradeStatus = document.getElementById("upgradeStatus");
+
+    const premiumExtrasEl = document.getElementById("premiumExtras");
+    const extraPlaylistTextEl = document.getElementById("extraPlaylistText");
+    const extraQueueTextEl = document.getElementById("extraQueueText");
+    const extraBadgeTextEl = document.getElementById("extraBadgeText");
+
+    // Util
+    function formatTL(amount) {
+      return "₺ " + amount.toFixed(2).replace(".", ",");
+    }
+    function formatEUR(amount) {
+      return "€ " + amount.toFixed(2).replace(".", ",");
+    }
+
+    function initialsFromName(name) {
+      if (!name) return "--";
+      return name
+        .split(" ")
+        .filter(Boolean)
+        .map((p) => p[0]?.toUpperCase())
+        .slice(0, 2)
+        .join("") || "--";
+    }
+
+    function updateToggleLabels() {
+      if (langToggleBtn) {
+        langToggleBtn.textContent = currentLang === "tr" ? "🇹🇷 TR" : "🇩🇪 DE";
+      }
+      if (currencyToggleBtn) {
+        currencyToggleBtn.textContent =
+          currentCurrency === "TRY" ? "₺ → €" : "€ → ₺";
+      }
+      document.documentElement.lang = currentLang === "de" ? "de" : "tr";
+    }
+
+    function renderPrices() {
+      if (!currentUser) return;
+      const lang = currentLang;
+      const cur = currentCurrency;
+
+      // Öğün fiyatları
+      if (cur === "TRY") {
+        const stdMealStr = formatTL(MEAL_STANDARD_TL);
+        const premMealStr = formatTL(MEAL_PREMIUM_TL);
+        cmpPriceStdEl.textContent = stdMealStr;
+        cmpPricePremEl.textContent = premMealStr;
+
+        if (lang === "tr") {
+          stdFeat1TextEl.textContent =
+            `Yemeklerde standart fiyat (${stdMealStr} / öğün)`;
+          premFeat1TextEl.textContent =
+            `Yemeklerde %25 indirim (${stdMealStr} → ${premMealStr})`;
+        } else {
+          stdFeat1TextEl.textContent =
+            `Standardpreis für Mahlzeiten (${stdMealStr} pro Mahlzeit)`;
+          premFeat1TextEl.textContent =
+            `25 % Rabatt auf Mahlzeiten (${stdMealStr} → ${premMealStr})`;
+        }
+      } else {
+        const stdMealEUR = MEAL_STANDARD_TL / EUR_RATE;
+        const premMealEUR = MEAL_PREMIUM_TL / EUR_RATE;
+        const stdMealStr = formatEUR(stdMealEUR);
+        const premMealStr = formatEUR(premMealEUR);
+        cmpPriceStdEl.textContent = stdMealStr;
+        cmpPricePremEl.textContent = premMealStr;
+
+        if (lang === "tr") {
+          stdFeat1TextEl.textContent =
+            `Yemeklerde standart fiyat (${stdMealStr} / öğün, ≈ ${formatTL(MEAL_STANDARD_TL)})`;
+          premFeat1TextEl.textContent =
+            `Yemeklerde %25 indirim (${stdMealStr} → ${premMealStr})`;
+        } else {
+          stdFeat1TextEl.textContent =
+            `Standardpreis für Mahlzeiten (${stdMealStr} pro Mahlzeit, ≈ ${formatTL(MEAL_STANDARD_TL)})`;
+          premFeat1TextEl.textContent =
+            `25 % Rabatt auf Mahlzeiten (${stdMealStr} → ${premMealStr})`;
+        }
+      }
+
+      // Aylık üyelik ücreti & Premium kart fiyatı
+      if (cur === "TRY") {
+        cmpFeeStdEl.textContent = formatTL(0);
+        cmpFeePremEl.textContent = formatTL(PREMIUM_TL);
+        premiumPriceMainEl.textContent = formatTL(PREMIUM_TL);
+      } else {
+        const premiumEUR = PREMIUM_TL / EUR_RATE;
+        cmpFeeStdEl.textContent = formatEUR(0);
+        cmpFeePremEl.textContent =
+          formatEUR(premiumEUR) + " (≈ " + formatTL(PREMIUM_TL) + ")";
+        premiumPriceMainEl.textContent = formatEUR(premiumEUR);
+      }
+
+      premiumPriceSuffixEl.textContent =
+        lang === "tr" ? "/ay" : "/Monat";
+    }
+
+    function renderAccountUI() {
+      if (!currentUser) return;
+
+      const lang = currentLang;
+      const cur = currentCurrency;
+      const isPremium = !!currentUser.is_premium;
+      const locale = lang === "de" ? "de-DE" : "tr-TR";
+
+      updateToggleLabels();
+
+      // Üst başlıklar
+      brandSubEl.textContent =
+        lang === "tr" ? "Yemekhane · Hesap Merkezi" : "Mensa · Kontozentrale";
+      pageTitleEl.textContent =
+        lang === "tr" ? "Hesap bilgilerin." : "Deine Kontodaten.";
+      pageSubtitleEl.textContent =
+        lang === "tr"
+          ? "İsim, öğrenci numaran, e-posta ve Premium durumun tek ekranda."
+          : "Name, Matrikelnummer, E-Mail und Premium-Status auf einen Blick.";
+
+      // Profil kart metinleri
+      profileTitleEl.textContent =
+        lang === "tr" ? "Profil Özeti" : "Profilübersicht";
+      profileSubtitleEl.textContent =
+        lang === "tr"
+          ? "TAÜ yemekhane sistemi üzerinde kayıtlı temel bilgiler."
+          : "Basisdaten, die im TAU-Mensasystem hinterlegt sind.";
+
+      labelNameEl.textContent = lang === "tr" ? "İsim Soyisim" : "Name";
+      labelStudentNoEl.textContent =
+        lang === "tr" ? "Öğrenci No" : "Matrikelnummer";
+      labelEmailEl.textContent = lang === "tr" ? "E-posta" : "E-Mail";
+      labelPremiumEl.textContent =
+        lang === "tr" ? "Premium Durumu" : "Premium-Status";
+      labelCreatedEl.textContent =
+        lang === "tr" ? "Sisteme Kayıt" : "Registriert am";
+
+      profileNameEl.textContent = currentUser.name || "—";
+      profileStudentNoEl.textContent = currentUser.student_no || "—";
+      profileEmailEl.textContent = currentUser.email || "—";
+      profileCreatedAtEl.textContent = currentUser.created_at
+        ? new Date(currentUser.created_at).toLocaleString(locale)
+        : "—";
+
+      profileHintEl.textContent =
+        lang === "tr"
+          ? "Bu bilgiler demo amaçlı gösterilir. Gerçek sistemde değişiklikler öğrenci işleri ve yemekhane birimi tarafından yönetilir."
+          : "Diese Daten werden zu Demo-Zwecken angezeigt. Im echten System werden Änderungen von Verwaltung/Mensa betreut.";
+
+      // Avatar metinleri
+      avatarTitleEl.textContent =
+        lang === "tr" ? "Profil fotoğrafı" : "Profilbild";
+      avatarSubEl.textContent =
+        lang === "tr"
+          ? "Sadece bu cihazda saklanır, sunucuya yüklenmez (demo)."
+          : "Nur lokal auf diesem Gerät, wird nicht hochgeladen (Demo).";
+      avatarButtonLabelEl.textContent =
+        lang === "tr" ? "Fotoğraf Seç" : "Bild auswählen";
+      if (!photoNoteEl.textContent) {
+        photoNoteEl.textContent =
+          lang === "tr"
+            ? "Seçilen fotoğraf sadece bu cihazda ön izleme olarak gösterilir."
+            : "Das gewählte Bild wird nur lokal als Vorschau angezeigt.";
+      }
+
+      // Eğer foto yoksa baş harfler:
+      if (!avatarPreview.style.backgroundImage) {
+        avatarInitialsEl.textContent = initialsFromName(currentUser.name);
+      }
+
+      // Plan kartları metinleri
+      currentPlanLabelEl.textContent =
+        lang === "tr" ? "Mevcut Planın" : "Aktueller Tarif";
+      stdPriceMainEl.textContent =
+        lang === "tr" ? "Ücretsiz" : "Kostenlos";
+      stdPriceSuffixEl.textContent =
+        lang === "tr" ? " · Varsayılan" : " · Standard";
+
+      premiumPlanLabelEl.textContent =
+        lang === "tr" ? "Önerilen" : "Empfohlen";
+      premiumPlanNameEl.textContent =
+        lang === "tr" ? "Yemekhane Premium" : "Mensa Premium";
+
+      stdFeat2TextEl.textContent =
+        lang === "tr"
+          ? "Online bakiye görüntüleme"
+          : "Online-Guthabenübersicht";
+      stdFeat3TextEl.textContent =
+        lang === "tr"
+          ? "QR ile ödeme oluşturma"
+          : "QR-Zahlungscode erstellen";
+
+      premFeat2TextEl.textContent =
+        lang === "tr"
+          ? "Yoğun saatlerde öncelikli geçiş kuyruğu*"
+          : "Bevorzugte Schlange zu Stoßzeiten*";
+      premFeat3TextEl.textContent =
+        lang === "tr"
+          ? "Aylık detaylı harcama breakdown’ı"
+          : "Monatliche detaillierte Auswertungen";
+      premFeat4TextEl.textContent =
+        lang === "tr"
+          ? "Öncelikli destek & geri bildirim hattı"
+          : "Priorisierter Support & Feedback-Kanal";
+      premFeat5TextEl.textContent =
+        lang === "tr"
+          ? "“Mensa Chill” özel Spotify playlist linki"
+          : "Exklusive \"Mensa Chill\" Spotify-Playlist";
+
+      // Karşılaştırma tablo başlıkları
+      compareTitleEl.textContent =
+        lang === "tr"
+          ? "Premium ile karşılaştır."
+          : "Vergleich mit Premium.";
+      compareSubtitleEl.textContent =
+        lang === "tr"
+          ? "Standart hesabın ile TAÜ Yemekhane Premium arasındaki farkları incele."
+          : "Vergleiche dein Standardkonto mit TAU Mensa Premium.";
+
+      cmpHeadFeatureEl.textContent = lang === "tr" ? "Özellik" : "Feature";
+      cmpHeadStandardEl.textContent =
+        lang === "tr" ? "Standart" : "Standard";
+      cmpHeadPremiumEl.textContent =
+        lang === "tr" ? "Premium" : "Premium";
+
+      cmpPriceLabelEl.textContent =
+        lang === "tr" ? "Öğün fiyatı" : "Preis pro Mahlzeit";
+      cmpFeeLabelEl.textContent =
+        lang === "tr" ? "Aylık üyelik ücreti" : "Monatliche Gebühr";
+      cmpQueueLabelEl.textContent =
+        lang === "tr" ? "Yoğun saat önceliği" : "Priorität zu Stoßzeiten";
+      cmpQueueStdEl.textContent = lang === "tr" ? "Yok" : "Nein";
+      cmpQueuePremEl.textContent = lang === "tr" ? "Var" : "Ja";
+      cmpReportLabelEl.textContent =
+        lang === "tr" ? "Ayrıntılı harcama raporu" : "Detaillierte Auswertung";
+      cmpReportStdEl.textContent =
+        lang === "tr" ? "Özet seviye" : "Kurzüberblick";
+      cmpReportPremEl.textContent =
+        lang === "tr" ? "Tam detaylı" : "Voll detailliert";
+      cmpSupportLabelEl.textContent =
+        lang === "tr" ? "Destek hattı" : "Support";
+      cmpSupportStdEl.textContent =
+        lang === "tr" ? "Standart" : "Standard";
+      cmpSupportPremEl.textContent =
+        lang === "tr" ? "Öncelikli" : "Priorisiert";
+      cmpChillLabelEl.textContent =
+        lang === "tr" ? "Chill perk" : "Chill-Perk";
+      cmpChillStdEl.textContent =
+        lang === "tr" ? "Genel playlist" : "Allgemeine Playlist";
+      cmpChillPremEl.textContent =
+        lang === "tr" ? "Ekstra “Premium Chill” playlist" : "Extra \"Premium Chill\" Playlist";
+
+      upgradeInfoEl.textContent =
+        lang === "tr"
+          ? "*Öncelikli geçiş, gerçek sistem devreye alındığında üniversite kuralları çerçevesinde uygulanır."
+          : "*Bevorzugte Schlange wird im echten System gemäß Uni-Regeln umgesetzt.";
+
+      // Premium ektra metinleri
+      if (extraPlaylistTextEl) {
+        extraPlaylistTextEl.textContent =
+          lang === "tr"
+            ? "Premium Chill playlistine özel link, kayıtlı e-posta adresine gönderilir (demo)."
+            : "Ein exklusiver 'Premium Chill'-Playlist-Link wird an deine E-Mail gesendet (Demo).";
+      }
+      if (extraQueueTextEl) {
+        extraQueueTextEl.textContent =
+          lang === "tr"
+            ? "Yoğun saatlerde turnikelerde altın Premium rozetin tanımlı olur (gerçek sistemde)."
+            : "Zu Stoßzeiten erscheint ein goldener Premium-Badge an den Drehkreuzen (im echten System).";
+      }
+      if (extraBadgeTextEl) {
+        extraBadgeTextEl.textContent =
+          lang === "tr"
+            ? "Hesabına özel “Mensa Pro” profil rozeti eklenir ve panelde de görünür."
+            : "Du bekommst ein \"Mensa Pro\"-Abzeichen, das auch im Panel sichtbar ist.";
+      }
+
+      // Hesap & Premium durumu
+      if (isPremium) {
+        statusPill.classList.add("premium");
+        statusText.textContent =
+          lang === "tr" ? "Premium hesap" : "Premium-Konto";
+        profilePremiumEl.textContent =
+          lang === "tr"
+            ? "Aktif · %25 indirimli yemek"
+            : "Aktiv · 25 % Rabatt auf Mahlzeiten";
+
+        currentPlanNameEl.textContent =
+          lang === "tr" ? "Premium Hesap" : "Premium-Konto";
+
+        upgradeBtn.textContent =
+          lang === "tr" ? "Premium Aktif" : "Premium aktiv";
+        upgradeBtn.disabled = true;
+
+        if (!upgradeStatus.textContent) {
+          upgradeStatus.textContent =
+            lang === "tr"
+              ? "Premium hakların panelde otomatik olarak uygulanıyor."
+              : "Deine Premium-Vorteile werden im Panel automatisch angewendet.";
+        }
+
+        // Glow & extras
+        document.body.classList.add("premium-active");
+        if (profileCardEl) profileCardEl.classList.add("premium-glow-card");
+        if (compareCardEl) compareCardEl.classList.add("premium-glow-card");
+        avatarPreview.classList.add("premium-avatar-ring");
+        if (premiumExtrasEl) premiumExtrasEl.style.display = "block";
+      } else {
+        statusPill.classList.remove("premium");
+        statusText.textContent =
+          lang === "tr" ? "Standart hesap" : "Standardkonto";
+        profilePremiumEl.textContent =
+          lang === "tr"
+            ? "Standart · İndirim yok"
+            : "Standard · Kein Rabatt";
+        currentPlanNameEl.textContent =
+          lang === "tr" ? "Standart Hesap" : "Standardkonto";
+
+        if (!upgradeStatus.dataset.locked) {
+          upgradeStatus.textContent = "";
+        }
+
+        upgradeBtn.textContent =
+          lang === "tr" ? "Premium'a Geç" : "Zu Premium wechseln";
+        upgradeBtn.disabled = false;
+
+        document.body.classList.remove("premium-active");
+        if (profileCardEl) profileCardEl.classList.remove("premium-glow-card");
+        if (compareCardEl) compareCardEl.classList.remove("premium-glow-card");
+        avatarPreview.classList.remove("premium-avatar-ring");
+        if (premiumExtrasEl) premiumExtrasEl.style.display = "none";
+      }
+
+      renderPrices();
+    }
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await fetch("/api/logout", { method: "POST" });
+      window.location.href = "/";
+    });
+
+    // Panele dön
+    backToPanelBtn.addEventListener("click", () => {
+      window.location.href = "/panel.html";
+    });
+
+    // Dil toggle
+    langToggleBtn.addEventListener("click", () => {
+      currentLang = currentLang === "tr" ? "de" : "tr";
+      try {
+        localStorage.setItem("tau-lang", currentLang);
+      } catch (e) {}
+      // DE seçildiğinde euroya kilitle
+      if (currentLang === "de") {
+        currentCurrency = "EUR";
+        try {
+          localStorage.setItem("tau-currency", currentCurrency);
+        } catch (e) {}
+      }
+      renderAccountUI();
+    });
+
+    // Para birimi toggle
+    currencyToggleBtn.addEventListener("click", () => {
+      currentCurrency = currentCurrency === "TRY" ? "EUR" : "TRY";
+      try {
+        localStorage.setItem("tau-currency", currentCurrency);
+      } catch (e) {}
+      renderAccountUI();
+    });
+
+    // Fotoğraf yükleme + backend'e gönderme
+    photoInput.addEventListener("change", async () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+
+      // 1) Hemen önizleme
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        avatarPreview.style.backgroundImage = `url(${e.target.result})`;
+        avatarInitialsEl.textContent = "";
+      };
+      reader.readAsDataURL(file);
+
+      // 2) Backend'e upload
+      photoNoteEl.textContent =
+        currentLang === "tr"
+          ? "Fotoğraf yükleniyor..."
+          : "Bild wird hochgeladen...";
+
+      try {
+        const formData = new FormData();
+        formData.append("photo", file); // backend'de field adı "photo" ise
+
+        const res = await fetch("/api/upload-photo", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.url) {
+          photoNoteEl.textContent =
+            data.error ||
+            (currentLang === "tr"
+              ? "Fotoğraf yüklenirken bir hata oluştu."
+              : "Fehler beim Hochladen des Bildes.");
+          return;
+        }
+
+        // Gerçek URL'yi avatar'a uygula
+        avatarPreview.style.backgroundImage = `url(${data.url})`;
+        avatarInitialsEl.textContent = "";
+
+        if (currentUser) {
+          currentUser.photoUrl = data.url; // /api/me de aynısını döndürüyorsa sync
+        }
+
+        photoNoteEl.textContent =
+          currentLang === "tr"
+            ? "Fotoğrafın kaydedildi."
+            : "Dein Bild wurde gespeichert.";
+      } catch (err) {
+        console.error(err);
+        photoNoteEl.textContent =
+          currentLang === "tr"
+            ? "Sunucuya bağlanırken hata oluştu."
+            : "Fehler bei der Verbindung zum Server.";
+      }
+    });
+
+    // Premium'a geç butonu
+    upgradeBtn.addEventListener("click", async () => {
+      if (!currentUser || currentUser.is_premium) return;
+      upgradeStatus.dataset.locked = "1";
+      upgradeStatus.textContent =
+        currentLang === "tr"
+          ? "Premium üyelik satın alınıyor..."
+          : "Premium-Mitgliedschaft wird gekauft...";
+      upgradeBtn.disabled = true;
+
+      try {
+        const res = await fetch("/api/subscribe-premium", { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) {
+          upgradeStatus.textContent =
+            data.error ||
+            (currentLang === "tr"
+              ? "İşlem başarısız."
+              : "Vorgang fehlgeschlagen.");
+          upgradeBtn.disabled = false;
+          upgradeStatus.dataset.locked = "1";
+          return;
+        }
+
+        // Sunucu tarafında is_premium set edildiğini varsayıyoruz
+        currentUser.is_premium = true;
+        upgradeStatus.textContent =
+          currentLang === "tr"
+            ? "Premium üyelik aktif! Artık yemeklerde %25 indirim alıyorsun."
+            : "Premium ist aktiv! Du erhältst jetzt 25 % Rabatt auf Mahlzeiten.";
+        renderAccountUI();
+      } catch (err) {
+        console.error(err);
+        upgradeStatus.textContent =
+          currentLang === "tr"
+            ? "Sunucu hatası. Lütfen daha sonra tekrar dene."
+            : "Serverfehler. Bitte versuche es später erneut.";
+        upgradeBtn.disabled = false;
+        upgradeStatus.dataset.locked = "1";
+      }
+    });
+
+    async function loadAccount() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.status === 401) {
+          window.location.href = "/";
+          return;
+        }
+        const data = await res.json();
+        currentUser = data.user;
+
+        // eurRate backend'den geliyorsa kullan
+        if (typeof data.eurRate === "number" && data.eurRate > 0) {
+          EUR_RATE = data.eurRate;
+        }
+
+        // Fotoğraf URL'si varsa avatar'a uygula
+        if (currentUser.photoUrl) {
+          avatarPreview.style.backgroundImage = `url(${currentUser.photoUrl})`;
+          avatarInitialsEl.textContent = "";
+        } else {
+          avatarInitialsEl.textContent = initialsFromName(currentUser.name);
+        }
+
+        renderAccountUI();
+      } catch (err) {
+        console.error(err);
+        upgradeStatus.textContent =
+          currentLang === "tr"
+            ? "Hesap bilgileri yüklenirken bir hata oluştu."
+            : "Fehler beim Laden deiner Kontodaten.";
+      }
+    }
+
+    (function initLangCurrency() {
+      try {
+        const savedLang = localStorage.getItem("tau-lang");
+        currentLang = savedLang === "de" ? "de" : "tr";
+        const savedCur = localStorage.getItem("tau-currency");
+        currentCurrency = savedCur === "EUR" ? "EUR" : "TRY";
+        if (currentLang === "de") {
+          currentCurrency = "EUR";
+        }
+      } catch (e) {
+        currentLang = "tr";
+        currentCurrency = "TRY";
+      }
+      updateToggleLabels();
+    })();
+
+    document.addEventListener("DOMContentLoaded", loadAccount);
+  </script>
+</body>
+</html>

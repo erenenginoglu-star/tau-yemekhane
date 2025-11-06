@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAÜ Yemekhane · Yükleme Yap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --subtle: #6e6e73;
+      --border-soft: rgba(0,0,0,0.08);
+      --shadow-soft: 0 20px 50px rgba(0,0,0,0.08);
+      --tau-green: #27ae60;
+      --bg-soft: #f5f5f7;
+      --danger: #e74c3c;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        system-ui, -system-ui, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0, #f5f5f7 45%, #e5e5ea 100%);
+      color: var(--ink);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-hero {
+      position: fixed;
+      right: -160px;
+      top: -90px;
+      width: 640px;
+      height: 640px;
+      background-image: url("campus-hero.jpg");
+      background-size: cover;
+      background-position: center;
+      filter: blur(20px) saturate(1.05);
+      opacity: 0.35;
+      transform: rotate(-4deg);
+      pointer-events: none;
+      z-index: -1;
+      border-radius: 50%;
+      mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0, transparent 70%);
+    }
+
+    .top-nav {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--subtle);
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brand-logo-img {
+      height:40px;
+      width:auto;
+      display:block;
+    }
+    .brand-text-main {
+      font-size:14px;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      color:#1d1d1f;
+    }
+    .brand-text-sub {
+      font-size:12px;
+      color:var(--subtle);
+    }
+
+    .nav-right {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn-ghost {
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.1);
+      background:rgba(255,255,255,0.9);
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:#1d1d1f;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:background 150ms ease, box-shadow 150ms ease, transform 120ms ease;
+    }
+    .btn-ghost:hover {
+      background:#f5f5f7;
+      box-shadow:0 6px 18px rgba(0,0,0,0.08);
+      transform:translateY(-1px);
+    }
+
+    .page-wrapper {
+      max-width:1100px;
+      margin:22px auto 40px;
+      padding:0 20px 40px;
+    }
+
+    .page-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .page-title {
+      font-size:26px;
+      font-weight:650;
+      letter-spacing:-0.03em;
+      margin:0 0 4px;
+      color:#1d1d1f;
+    }
+    .page-subtitle {
+      font-size:13px;
+      color:var(--subtle);
+      max-width:520px;
+    }
+
+    .balance-chip {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.06);
+      background:rgba(255,255,255,0.9);
+      font-size:12px;
+    }
+    .balance-label {
+      color:var(--subtle);
+    }
+    .balance-amount {
+      font-weight:600;
+    }
+
+    .layout {
+      display:grid;
+      grid-template-columns: minmax(0,1.7fr) minmax(0,1.1fr);
+      gap:18px;
+    }
+
+    .card {
+      background:#ffffff;
+      border-radius:26px;
+      border:1px solid var(--border-soft);
+      box-shadow:var(--shadow-soft);
+      padding:18px 20px 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before {
+      content:"";
+      position:absolute;
+      inset:-80px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0,113,227,0.06) 0, transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(39,174,96,0.06) 0, transparent 55%);
+      pointer-events:none;
+      z-index:-1;
+    }
+    .card-title {
+      font-size:18px;
+      font-weight:600;
+      margin:0 0 4px;
+      letter-spacing:-0.02em;
+      color:#1d1d1f;
+    }
+    .card-subtitle {
+      font-size:12px;
+      color:var(--subtle);
+      margin-bottom:8px;
+    }
+
+    .tab-nav {
+      display:flex;
+      gap:6px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .tab-button {
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.08);
+      background:#f5f5f7;
+      padding:6px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:#3a3a3c;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:background 150ms ease, border-color 150ms ease, color 150ms ease, transform 120ms ease;
+    }
+    .tab-button:hover {
+      background:#e5e5ea;
+      transform:translateY(-1px);
+    }
+    .tab-button.active {
+      background:#111111;
+      color:#ffffff;
+      border-color:#111111;
+    }
+
+    .tab-panel {
+      display:none;
+      margin-top:6px;
+    }
+    .tab-panel.active {
+      display:block;
+    }
+
+    .form-grid {
+      display:grid;
+      grid-template-columns:1.3fr 1.1fr;
+      gap:12px;
+      align-items:flex-start;
+    }
+    @media (max-width:900px) {
+      .layout { grid-template-columns:1fr; }
+      .form-grid { grid-template-columns:1fr; }
+    }
+
+    .field-group {
+      margin-bottom:10px;
+    }
+    .field-label {
+      font-size:12px;
+      color:var(--subtle);
+      margin-bottom:4px;
+    }
+    .field-input {
+      width:100%;
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,0.12);
+      font-size:13px;
+      outline:none;
+      background:#f5f5f7;
+      transition:border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+    .field-input:focus {
+      background:#ffffff;
+      border-color:#0071e3;
+      box-shadow:0 0 0 2px rgba(0,113,227,0.15);
+    }
+
+    .field-row {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+
+    .brand-select-row {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .brand-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.1);
+      background:#f5f5f7;
+      font-size:11px;
+      cursor:pointer;
+      user-select:none;
+      transition:background 150ms ease,border-color 150ms ease,transform 120ms ease;
+    }
+    .brand-pill input {
+      display:none;
+    }
+    .brand-pill.active {
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+    .brand-logo-small {
+      height:14px;
+      width:auto;
+    }
+
+    .card-preview-wrapper {
+      margin-bottom:10px;
+    }
+    .card-preview-label {
+      font-size:11px;
+      color:var(--subtle);
+      margin-bottom:4px;
+    }
+    .card-preview {
+      border-radius:20px;
+      padding:12px 14px;
+      color:#fff;
+      position:relative;
+      min-height:110px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+      box-shadow:0 12px 30px rgba(0,0,0,0.25);
+      transform:perspective(600px) rotateY(-6deg);
+      transition:transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+    }
+    .card-preview::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:radial-gradient(circle at 0 0,rgba(255,255,255,0.25),transparent 55%);
+      opacity:0.6;
+      pointer-events:none;
+    }
+    .card-preview-visa {
+      background:linear-gradient(135deg,#0050b3,#00a8ff);
+    }
+    .card-preview-mastercard {
+      background:linear-gradient(135deg,#ff5f40,#ffb347);
+    }
+    .card-preview-troy {
+      background:linear-gradient(135deg,#00796b,#26a69a);
+    }
+    .card-preview-match {
+      box-shadow:0 16px 40px rgba(39,174,96,0.7);
+      transform:perspective(600px) rotateY(-4deg) translateY(-2px);
+    }
+
+    .card-preview-top {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+    }
+    .card-chip {
+      width:28px;
+      height:20px;
+      border-radius:6px;
+      background:linear-gradient(135deg,#f5f5f7,#c7c7cc);
+      box-shadow:0 0 0 1px rgba(255,255,255,0.4);
+    }
+    .card-brand-label {
+      font-weight:600;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+    }
+    .card-number {
+      font-family:"SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:15px;
+      letter-spacing:0.12em;
+      margin:10px 0 4px;
+    }
+    .card-footer-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      font-size:10px;
+    }
+    .card-holder-name {
+      font-size:11px;
+      font-weight:500;
+    }
+    .card-exp-label {
+      opacity:0.8;
+    }
+    .card-detected {
+      font-size:11px;
+      margin-top:4px;
+      color:#e2f9ec;
+      opacity:0.9;
+    }
+
+    .installment-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:4px;
+    }
+    .installment-select {
+      min-width:160px;
+    }
+    .muted {
+      font-size:11px;
+      color:var(--subtle);
+    }
+
+    .btn-primary {
+      border:none;
+      border-radius:999px;
+      padding:9px 18px;
+      font-size:13px;
+      font-weight:500;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      cursor:pointer;
+      outline:none;
+      background:linear-gradient(135deg,#00b341,#27ae60);
+      color:#fff;
+      box-shadow:0 12px 30px rgba(4,182,80,0.45);
+      transition:transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform:translateY(-1px);
+      box-shadow:0 16px 38px rgba(4,182,80,0.55);
+    }
+    .btn-primary:disabled {
+      opacity:0.7;
+      cursor:default;
+      box-shadow:none;
+      transform:none;
+    }
+
+    .status-line {
+      font-size:11px;
+      color:var(--subtle);
+      margin-top:6px;
+      min-height:14px;
+    }
+    .status-line.error {
+      color:var(--danger);
+    }
+    .status-line.success {
+      color:var(--tau-green);
+    }
+
+    /* SEPA */
+    .fx-widget {
+      margin-top:6px;
+      padding:8px 10px;
+      border-radius:14px;
+      background:#f5f5f7;
+      border:1px solid rgba(0,0,0,0.06);
+      font-size:11px;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .fx-rate {
+      font-weight:600;
+    }
+    .fx-updated {
+      color:var(--subtle);
+    }
+
+    /* İhtiyaç kredisi */
+    .loan-layout {
+      display:grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1.1fr);
+      gap:12px;
+      align-items:flex-start;
+    }
+    @media (max-width:720px) {
+      .loan-layout { grid-template-columns:1fr; }
+    }
+    .loan-logo {
+      max-width:160px;
+      width:100%;
+      height:auto;
+      display:block;
+      margin-bottom:8px;
+    }
+    .loan-status-box {
+      margin-top:8px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:#f5f5f7;
+      border:1px solid rgba(0,0,0,0.06);
+      font-size:11px;
+    }
+    .loan-status-header {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:4px;
+    }
+    .spinner {
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      border:2px solid rgba(0,0,0,0.08);
+      border-top-color:#0071e3;
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform:rotate(360deg); }
+    }
+    .loan-gif {
+      margin-top:6px;
+      max-width:100%;
+      border-radius:14px;
+      display:none; /* GIF'i artık inline göstermiyoruz, sadece modalda */
+    }
+
+    /* Sağ kart */
+    .side-section-title {
+      font-size:14px;
+      font-weight:600;
+      margin:0 0 6px;
+    }
+    .side-row {
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+      margin-bottom:4px;
+    }
+    .side-row strong {
+      font-weight:600;
+    }
+    .logo-strip {
+      margin-top:12px;
+      padding-top:8px;
+      border-top:1px solid rgba(0,0,0,0.06);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .logo-strip img {
+      height:20px;
+      width:auto;
+      display:block;
+    }
+    .logo-note {
+      font-size:10px;
+      color:var(--subtle);
+    }
+
+    .footer-note {
+      max-width:1100px;
+      margin:14px auto 24px;
+      padding:0 20px;
+      font-size:11px;
+      color:var(--subtle);
+    }
+
+    /* Modallar (31 TL şakası + GIF modal) */
+    .modal-backdrop {
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.28);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:20;
+    }
+    .modal-backdrop.visible {
+      display:flex;
+    }
+    .modal-card {
+      width:100%;
+      max-width:380px;
+      background:#ffffff;
+      border-radius:24px;
+      padding:16px 18px 18px;
+      box-shadow:0 24px 60px rgba(0,0,0,0.4);
+      animation:modal-up 0.22s ease-out;
+      font-size:13px;
+    }
+    @keyframes modal-up {
+      from { transform:translateY(20px); opacity:0; }
+      to { transform:translateY(0); opacity:1; }
+    }
+    .modal-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .modal-title {
+      font-size:16px;
+      font-weight:600;
+    }
+    .modal-close {
+      border:none;
+      border-radius:999px;
+      background:#f5f5f7;
+      font-size:12px;
+      padding:4px 10px;
+      cursor:pointer;
+    }
+
+    @media (max-width:720px) {
+      .top-nav { padding-inline:12px; }
+      .page-wrapper { padding-inline:12px; }
+      .card { border-radius:22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-hero"></div>
+
+  <header class="top-nav">
+    <div class="brand">
+      <img
+        class="brand-logo-img"
+        src="https://3fcampus.tau.edu.tr/uploads/cms/pr.tau/dgFfmceK6A.png"
+        alt="Türk-Alman Üniversitesi Logosu"
+      />
+      <div>
+        <div class="brand-text-main">Türk-Alman Üniversitesi</div>
+        <div class="brand-text-sub" id="brandSub">Yemekhane · Yükleme Merkezi</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost" id="langToggle">🇹🇷 TR</button>
+      <button class="btn-ghost" id="currencyToggle">₺ → €</button>
+      <button class="btn-ghost" id="toPanelBtn">← Panele Dön</button>
+      <button class="btn-ghost" id="toAccountBtn">Hesap</button>
+      <button class="btn-ghost" id="toTxBtn">Hareketler</button>
+      <button class="btn-ghost" id="logoutBtn">Çıkış Yap</button>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title" id="pageTitle">Kartına yükleme yap.</h1>
+        <p class="page-subtitle" id="pageSubtitle">
+          Kredi kartı veya SEPA ile demo yükleme yap. Gerçek ödeme alınmaz, sadece yemekhane bakiyen güncellenir.
+        </p>
+      </div>
+      <div class="balance-chip">
+        <span class="balance-label" id="balanceLabel">Mevcut bakiyen</span>
+        <span class="balance-amount" id="balanceValue">₺ 0,00</span>
+      </div>
+    </div>
+
+    <section class="layout">
+      <!-- Sol: ödeme sekmeleri -->
+      <section class="card">
+        <h2 class="card-title" id="mainCardTitle">Ödeme yöntemi seç</h2>
+        <p class="card-subtitle" id="mainCardSubtitle">
+          Kredi kartı, SEPA veya ihtiyaç kredisi simülasyonu ile demo yükleme.
+        </p>
+
+        <div class="tab-nav">
+          <button class="tab-button active" data-tab="card" id="tabBtnCard">💳 Kredi / Banka Kartı</button>
+          <button class="tab-button" data-tab="sepa" id="tabBtnSepa">🇪🇺 SEPA / Avrupa</button>
+          <button class="tab-button" data-tab="loan" id="tabBtnLoan">💶 İhtiyaç Kredisi</button>
+        </div>
+
+        <!-- TAB: KART -->
+        <div class="tab-panel active" id="tab-card">
+          <div class="form-grid">
+            <div>
+              <div class="field-group">
+                <div class="field-label" id="brandLabel">Kart markası</div>
+                <div class="brand-select-row">
+                  <label class="brand-pill active" data-brand="visa" id="brandPillVisa">
+                    <input type="radio" name="cardBrand" value="visa" checked />
+                    <img class="brand-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" />
+                    <span>VISA</span>
+                  </label>
+                  <label class="brand-pill" data-brand="mastercard" id="brandPillMc">
+                    <input type="radio" name="cardBrand" value="mastercard" />
+                    <img class="brand-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" />
+                    <span>Mastercard</span>
+                  </label>
+                  <label class="brand-pill" data-brand="troy" id="brandPillTroy">
+                    <input type="radio" name="cardBrand" value="troy" />
+                    <img class="brand-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/2/25/Troy_logo.png" alt="Troy" />
+                    <span>Troy</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="card-preview-wrapper">
+                <div class="card-preview-label" id="cardPreviewLabel">Kart önizlemesi (demo)</div>
+                <div class="card-preview card-preview-visa" id="cardPreview">
+                  <div class="card-preview-top">
+                    <div class="card-chip"></div>
+                    <div class="card-brand-label" id="cardBrandText">VISA</div>
+                  </div>
+                  <div class="card-number" id="cardNumberPreview">•••• •••• •••• ••••</div>
+                  <div class="card-footer-row">
+                    <div>
+                      <div class="card-exp-label" id="cardHolderLabelMini">KART SAHİBİ</div>
+                      <div class="card-holder-name" id="cardHolderPreview">AD SOYAD</div>
+                    </div>
+                    <div style="text-align:right;">
+                      <div class="card-exp-label" id="cardExpLabelMini">SON KULLANMA</div>
+                      <div class="card-holder-name" id="cardExpPreview">MM/YY</div>
+                    </div>
+                  </div>
+                  <div class="card-detected" id="cardDetectedHint"></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="field-group">
+                <label class="field-label" for="cardName" id="cardNameLabel">Kart üzerindeki isim</label>
+                <input id="cardName" class="field-input" type="text" placeholder="Ad Soyad" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="cardNumber" id="cardNumberLabel">Kart numarası</label>
+                <input id="cardNumber" class="field-input" type="text" inputmode="numeric" maxlength="19" placeholder="•••• •••• •••• ••••" />
+              </div>
+              <div class="field-group field-row">
+                <div>
+                  <label class="field-label" for="cardExpiry" id="cardExpiryLabel">Son kullanma (AA/YY)</label>
+                  <input id="cardExpiry" class="field-input" type="text" placeholder="12/27" maxlength="5" />
+                </div>
+                <div>
+                  <label class="field-label" for="cardCvc" id="cardCvcLabel">CVC</label>
+                  <input id="cardCvc" class="field-input" type="password" inputmode="numeric" maxlength="4" placeholder="•••" />
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="cardAmount" id="cardAmountLabel">Yüklenecek tutar (₺)</label>
+                <input id="cardAmount" class="field-input" type="number" min="10" step="10" value="100" />
+              </div>
+              <div class="field-group">
+                <div class="installment-row">
+                  <div>
+                    <div class="field-label" id="installmentLabel">Taksit (demo)</div>
+                    <select id="installmentSelect" class="field-input installment-select">
+                      <option value="1">Tek çekim</option>
+                      <option value="3">3 taksit · 0 faiz (demo)</option>
+                      <option value="6">6 taksit (demo)</option>
+                    </select>
+                  </div>
+                  <div class="muted" id="installmentInfo">
+                    3 taksit seçersen sadece görsel olarak bölünür, gerçek kampanya değildir.
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn-primary" id="cardPayBtn">
+                💸 Kredi yüklemesini yap
+              </button>
+              <div class="status-line" id="cardStatus"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: SEPA -->
+        <div class="tab-panel" id="tab-sepa">
+          <div class="field-group">
+            <label class="field-label" for="sepaName" id="sepaNameLabel">Hesap sahibi adı</label>
+            <input id="sepaName" class="field-input" type="text" placeholder="Ad Soyad" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="sepaIban" id="sepaIbanLabel">IBAN (DE...)</label>
+            <input id="sepaIban" class="field-input" type="text" placeholder="DE12 3456 7890 1234 5678 90" />
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="sepaAmount" id="sepaAmountLabel">Yüklenecek tutar (€)</label>
+            <input id="sepaAmount" class="field-input" type="number" min="5" step="5" value="20" />
+            <div class="muted" id="sepaAmountPreview">≈ ₺ 980,00 (demo kur)</div>
+          </div>
+
+          <div class="fx-widget">
+            <div>
+              <div id="fxTitle" style="font-weight:600;">Güncel EUR → TRY</div>
+              <div class="fx-rate" id="fxRate">1 € ≈ 49,00 ₺</div>
+            </div>
+            <div class="fx-updated" id="fxUpdated">Güncelleme: bekleniyor...</div>
+          </div>
+
+          <button class="btn-primary" style="margin-top:10px;" id="sepaPayBtn">
+            💶 SEPA ile yükleme yap
+          </button>
+          <div class="status-line" id="sepaStatus"></div>
+        </div>
+
+        <!-- TAB: İHTİYAÇ KREDİSİ -->
+        <div class="tab-panel" id="tab-loan">
+          <div class="loan-layout">
+            <div>
+              <img
+                class="loan-logo"
+                src="https://w7.pngwing.com/pngs/78/728/png-transparent-turkiye-%C4%B0%C5%9F-bankas%C4%B1-hd-logo.png"
+                alt="Türkiye İş Bankası Logosu"
+              />
+              <p class="muted" id="loanText">
+                İhtiyaç kredisi ile yemekhane harcamalarını taksitlendirme fikrini tamamen şaka amaçlı simüle ediyoruz.
+                Gerçek bir kredi başvurusu değildir.
+              </p>
+              <button class="btn-primary" id="loanApplyBtn">
+                📝 Kredi başvurusunda bulunun (demo)
+              </button>
+            </div>
+            <div>
+              <div class="loan-status-box" id="loanStatusBox" style="display:none;">
+                <div class="loan-status-header" id="loanStatusHeader">
+                  <div class="spinner" id="loanSpinner"></div>
+                  <div id="loanStatusTitle">Başvuru değerlendiriliyor...</div>
+                </div>
+                <div id="loanStatusDesc">
+                  Sistemimiz, yemekhane taksit potansiyelinizi inceliyor (şaka tabii ki 😄).
+                </div>
+                <img
+                  id="loanGif"
+                  class="loan-gif"
+                  src="https://cdn.dribbble.com/userupload/23975920/file/original-f649f23e057b72bc91be69aca101de6f.gif"
+                  alt="Başvuru animasyonu"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sağ: Özet ve logolar -->
+      <aside class="card">
+        <h2 class="side-section-title" id="summaryTitle">Yükleme özeti</h2>
+        <p class="card-subtitle" id="summarySubtitle">
+          Yapılan demo yüklemeler anında paneldeki bakiye ve hareketler listesinde görünür.
+        </p>
+
+        <div class="side-row">
+          <span id="summaryUserLabel">Kullanıcı</span>
+          <strong id="summaryUserValue">—</strong>
+        </div>
+        <div class="side-row">
+          <span id="summaryEmailLabel">E-posta</span>
+          <strong id="summaryEmailValue">—</strong>
+        </div>
+        <div class="side-row">
+          <span id="summaryBalanceLabel">Güncel bakiye</span>
+          <strong id="summaryBalanceValue">₺ 0,00</strong>
+        </div>
+
+        <p class="card-subtitle" style="margin-top:10px;" id="summaryNote">
+          Bu sayfadan yaptığın tüm yüklemeler, panelde “Online Yükleme” olarak görünür.
+          Gerçek banka entegrasyonu yoktur.
+        </p>
+
+        <div class="logo-strip">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Troy_logo.png" alt="Troy" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Single_Euro_Payments_Area_logo.svg" alt="SEPA" />
+          <span class="logo-note" id="logoNote">
+            Kart & kredi hizmetlerimiz demo ortamında, yukarıdaki sağlayıcı logoları sadece görseldir.
+          </span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="footer-note" id="footerNote">
+    TAÜ Yemekhane Ödeme Sistemi · Bu arayüz demo niteliğindedir, gerçek ödeme işlemi yapmaz.
+  </div>
+
+  <!-- 31 TL şakası modal -->
+  <div class="modal-backdrop" id="prankBackdrop" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="prankTitle">Hahahaha :)</div>
+        <button class="modal-close" id="prankClose">Kapat</button>
+      </div>
+      <div class="muted" id="prankText" style="font-size:12px;">
+        31 TL yükleme denedin, bunu özel bir “komik rakam” olarak işaretledik 😄<br/>
+        Hadi, başka bir tutar dener misin?
+      </div>
+    </div>
+  </div>
+
+  <!-- Ödeme / kredi GIF modalı -->
+  <div class="modal-backdrop" id="paymentGifBackdrop" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="paymentGifTitle">İşlem yapılıyor...</div>
+        <button class="modal-close" id="paymentGifClose">Kapat</button>
+      </div>
+      <div style="text-align:center;">
+        <img
+          id="paymentGifImg"
+          src=""
+          alt="İşlem animasyonu (demo)"
+          style="max-width:100%; border-radius:16px; margin-top:4px;"
+        />
+        <div class="muted" id="paymentGifDesc" style="font-size:12px; margin-top:6px;">
+          Bu animasyon sadece demo amaçlıdır.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const EUR_RATE_DEFAULT = 49;
+    let currentFxRate = EUR_RATE_DEFAULT;
+
+    const VISA_GIF_URL = "https://cdn.dribbble.com/userupload/24220806/file/original-63597eeda2e85825971f95329f06e822.gif";
+const MC_GIF_URL   = "https://cdn.dribbble.com/userupload/29785860/file/original-ddb1ca4df259601b55b8b3ef30058ec1.gif";
+const LOAN_GIF_URL = "https://cdn.dribbble.com/userupload/23975920/file/original-f649f23e057b72bc91be69aca101de6f.gif";
+
+
+    let currentLang = "tr";
+    let currentCurrency = "TRY";
+    let currentUser = null;
+
+    // Nav & genel
+    const langToggleBtn = document.getElementById("langToggle");
+    const currencyToggleBtn = document.getElementById("currencyToggle");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const toPanelBtn = document.getElementById("toPanelBtn");
+    const toAccountBtn = document.getElementById("toAccountBtn");
+    const toTxBtn = document.getElementById("toTxBtn");
+
+    const brandSubEl = document.getElementById("brandSub");
+    const pageTitleEl = document.getElementById("pageTitle");
+    const pageSubtitleEl = document.getElementById("pageSubtitle");
+    const balanceLabelEl = document.getElementById("balanceLabel");
+    const balanceValueEl = document.getElementById("balanceValue");
+
+    // Tabs
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabPanels = {
+      card: document.getElementById("tab-card"),
+      sepa: document.getElementById("tab-sepa"),
+      loan: document.getElementById("tab-loan"),
+    };
+
+    // Card elements
+    const brandPillVisa = document.getElementById("brandPillVisa");
+    const brandPillMc = document.getElementById("brandPillMc");
+    const brandPillTroy = document.getElementById("brandPillTroy");
+    const cardPreview = document.getElementById("cardPreview");
+    const cardBrandText = document.getElementById("cardBrandText");
+    const cardNumberPreview = document.getElementById("cardNumberPreview");
+    const cardHolderPreview = document.getElementById("cardHolderPreview");
+    const cardExpPreview = document.getElementById("cardExpPreview");
+    const cardDetectedHint = document.getElementById("cardDetectedHint");
+    const cardNameInput = document.getElementById("cardName");
+    const cardNumberInput = document.getElementById("cardNumber");
+    const cardExpiryInput = document.getElementById("cardExpiry");
+    const cardCvcInput = document.getElementById("cardCvc");
+    const cardAmountInput = document.getElementById("cardAmount");
+    const installmentSelect = document.getElementById("installmentSelect");
+    const installmentInfo = document.getElementById("installmentInfo");
+    const cardPayBtn = document.getElementById("cardPayBtn");
+    const cardStatus = document.getElementById("cardStatus");
+
+    // SEPA
+    const sepaNameInput = document.getElementById("sepaName");
+    const sepaIbanInput = document.getElementById("sepaIban");
+    const sepaAmountInput = document.getElementById("sepaAmount");
+    const sepaAmountPreview = document.getElementById("sepaAmountPreview");
+    const fxTitleEl = document.getElementById("fxTitle");
+    const fxRateEl = document.getElementById("fxRate");
+    const fxUpdatedEl = document.getElementById("fxUpdated");
+    const sepaPayBtn = document.getElementById("sepaPayBtn");
+    const sepaStatus = document.getElementById("sepaStatus");
+
+    // Loan
+    const loanApplyBtn = document.getElementById("loanApplyBtn");
+    const loanStatusBox = document.getElementById("loanStatusBox");
+    const loanSpinner = document.getElementById("loanSpinner");
+    const loanStatusTitle = document.getElementById("loanStatusTitle");
+    const loanStatusDesc = document.getElementById("loanStatusDesc");
+    const loanText = document.getElementById("loanText");
+
+    // Summary card
+    const summaryTitleEl = document.getElementById("summaryTitle");
+    const summarySubtitleEl = document.getElementById("summarySubtitle");
+    const summaryUserLabelEl = document.getElementById("summaryUserLabel");
+    const summaryUserValueEl = document.getElementById("summaryUserValue");
+    const summaryEmailLabelEl = document.getElementById("summaryEmailLabel");
+    const summaryEmailValueEl = document.getElementById("summaryEmailValue");
+    const summaryBalanceLabelEl = document.getElementById("summaryBalanceLabel");
+    const summaryBalanceValueEl = document.getElementById("summaryBalanceValue");
+    const summaryNoteEl = document.getElementById("summaryNote");
+    const logoNoteEl = document.getElementById("logoNote");
+    const footerNoteEl = document.getElementById("footerNote");
+
+    // 31 TL şakası modal
+    const prankBackdrop = document.getElementById("prankBackdrop");
+    const prankClose = document.getElementById("prankClose");
+
+    // GIF modal
+    const paymentGifBackdrop = document.getElementById("paymentGifBackdrop");
+    const paymentGifClose = document.getElementById("paymentGifClose");
+    const paymentGifImg = document.getElementById("paymentGifImg");
+    const paymentGifTitle = document.getElementById("paymentGifTitle");
+    const paymentGifDesc = document.getElementById("paymentGifDesc");
+
+    const translations = {
+      tr: {
+        brandSub: "Yemekhane · Yükleme Merkezi",
+        pageTitle: "Kartına yükleme yap.",
+        pageSubtitle:
+          "Kredi kartı veya SEPA ile demo yükleme yap. Gerçek ödeme alınmaz, sadece yemekhane bakiyen güncellenir.",
+        balanceLabel: "Mevcut bakiyen",
+        mainCardTitle: "Ödeme yöntemi seç",
+        mainCardSubtitle:
+          "Kredi kartı, SEPA veya ihtiyaç kredisi simülasyonu ile demo yükleme.",
+        tabCard: "💳 Kredi / Banka Kartı",
+        tabSepa: "🇪🇺 SEPA / Avrupa",
+        tabLoan: "💶 İhtiyaç Kredisi",
+        brandLabel: "Kart markası",
+        cardPreviewLabel: "Kart önizlemesi (demo)",
+        cardHolderMini: "KART SAHİBİ",
+        cardExpMini: "SON KULLANMA",
+        cardNameLabel: "Kart üzerindeki isim",
+        cardNumberLabel: "Kart numarası",
+        cardExpiryLabel: "Son kullanma (AA/YY)",
+        cardCvcLabel: "CVC",
+        cardAmountLabel: "Yüklenecek tutar (₺)",
+        installmentLabel: "Taksit (demo)",
+        installmentInfo:
+          "3 taksit seçersen sadece görsel olarak bölünür, gerçek kampanya değildir.",
+        cardBtn: "💸 Kredi yüklemesini yap",
+        statusReady: "",
+        statusInvalid: "Lütfen geçerli bir tutar gir.",
+        statusSending: "Yükleme isteği gönderiliyor (demo)...",
+        statusSuccess: "Yükleme başarılı! Bakiyen güncelleniyor...",
+        statusError: "Yükleme yapılamadı.",
+        statusServerError: "Sunucu hatası. Lütfen tekrar dene.",
+        detectedVisa: "Numara, VISA kart numarasına benziyor.",
+        detectedMc: "Numara, Mastercard numarasına benziyor.",
+        detectedOther: "Numara, seçtiğin marka ile tam eşleşmeyebilir (demo).",
+        detectedNone: "",
+        sepaNameLabel: "Hesap sahibi adı",
+        sepaIbanLabel: "IBAN (DE...)",
+        sepaAmountLabel: "Yüklenecek tutar (€)",
+        sepaPreviewPrefix: "≈",
+        sepaPreviewSuffix: "(güncel kura göre yaklaşık TL)",
+        sepaBtn: "💶 SEPA ile yükleme yap",
+        sepaStatusInvalid: "Lütfen IBAN ve geçerli bir tutar gir.",
+        fxTitle: "Güncel EUR → TRY",
+        fxUpdatedPrefix: "Güncelleme:",
+        fxUpdatedPending: "Güncelleme: bekleniyor...",
+        fxUpdatedError: "Güncelleme: kur alınamadı, demo değer kullanılıyor.",
+        summaryTitle: "Yükleme özeti",
+        summarySubtitle:
+          "Yaptığın demo yüklemeler anında paneldeki bakiye ve hareketler listesinde görünür.",
+        summaryUserLabel: "Kullanıcı",
+        summaryEmailLabel: "E-posta",
+        summaryBalanceLabel: "Güncel bakiye",
+        summaryNote:
+          "Bu sayfadan yaptığın tüm yüklemeler, panelde “Online Yükleme” olarak görünür. Gerçek banka entegrasyonu yoktur.",
+        logoNote:
+          "Kart & kredi hizmetlerimiz demo ortamında, yukarıdaki sağlayıcı logoları sadece görseldir.",
+        footerNote:
+          "TAÜ Yemekhane Ödeme Sistemi · Bu arayüz demo niteliğindedir, gerçek ödeme işlemi yapmaz.",
+        prankTitle: "Hahahaha :)",
+        prankText:
+          "31 TL yükleme denedin, bunu özel bir “komik rakam” olarak işaretledik 😄\nHadi, başka bir tutar dener misin?",
+        loanText:
+          "İhtiyaç kredisi ile yemekhane harcamalarını taksitlendirme fikrini tamamen şaka amaçlı simüle ediyoruz. Gerçek bir kredi başvurusu değildir.",
+        loanBtn: "📝 Kredi başvurusunda bulunun (demo)",
+        loanStatusTitleLoading: "Başvuru değerlendiriliyor...",
+        loanStatusDescLoading:
+          "Sistemimiz, yemekhane taksit potansiyelinizi inceliyor (şaka tabii ki 😄).",
+        loanStatusTitleDone: "Başvurun değerlendirildi (şaka)!",
+        loanStatusDescDone:
+          "Sonuç: TAÜ Mensa sistemi seni zaten seviyor, ekstra krediye gerek yok. Yine de bütçeni planlı kullan :)",
+        langToggleTR: "🇹🇷 TR",
+        langToggleDE: "🇩🇪 DE",
+        curToggleTRY: "₺ → €",
+        curToggleEUR: "€ → ₺",
+        toPanel: "← Panele Dön",
+        toAccount: "Hesap",
+        toTx: "Hareketler",
+        logout: "Çıkış Yap"
+      },
+      de: {
+        brandSub: "Mensa · Aufladezentrum",
+        pageTitle: "Lade deine Karte auf.",
+        pageSubtitle:
+          "Lade dein Mensa-Guthaben per Karte oder SEPA (Demo). Es werden keine echten Zahlungen ausgeführt.",
+        balanceLabel: "Aktuelles Guthaben",
+        mainCardTitle: "Zahlungsmethode wählen",
+        mainCardSubtitle:
+          "Demo-Aufladung mit Kreditkarte, SEPA oder einem Spaß-\"Kredit\".",
+        tabCard: "💳 Kredit-/Debitkarte",
+        tabSepa: "🇪🇺 SEPA / Europa",
+        tabLoan: "💶 Ratenkredit (Spaß)",
+        brandLabel: "Kartentyp",
+        cardPreviewLabel: "Karten-Vorschau (Demo)",
+        cardHolderMini: "KARTENINHABER",
+        cardExpMini: "GÜLTIG BIS",
+        cardNameLabel: "Name auf der Karte",
+        cardNumberLabel: "Kartennummer",
+        cardExpiryLabel: "Gültig bis (MM/JJ)",
+        cardCvcLabel: "CVC",
+        cardAmountLabel: "Aufzuladender Betrag (₺)",
+        installmentLabel: "Raten (Demo)",
+        installmentInfo:
+          "Bei 3 Raten wird der Betrag nur optisch geteilt – keine echte Bankkampagne.",
+        cardBtn: "💸 Guthaben aufladen (Demo)",
+        statusReady: "",
+        statusInvalid: "Bitte einen gültigen Betrag eingeben.",
+        statusSending: "Aufladung wird gesendet (Demo)...",
+        statusSuccess: "Aufladung erfolgreich! Guthaben wird aktualisiert...",
+        statusError: "Aufladung fehlgeschlagen.",
+        statusServerError: "Serverfehler. Bitte erneut versuchen.",
+        detectedVisa: "Nummer sieht wie eine VISA-Kartennummer aus.",
+        detectedMc: "Nummer sieht wie eine Mastercard-Nummer aus.",
+        detectedOther:
+          "Nummer passt möglicherweise nicht exakt zum ausgewählten Typ (Demo).",
+        detectedNone: "",
+        sepaNameLabel: "Kontoinhaber",
+        sepaIbanLabel: "IBAN (DE...)",
+        sepaAmountLabel: "Aufzuladender Betrag (€)",
+        sepaPreviewPrefix: "≈",
+        sepaPreviewSuffix: "(ungefähres TL-Guthaben zum aktuellen Kurs)",
+        sepaBtn: "💶 Mit SEPA aufladen",
+        sepaStatusInvalid: "Bitte IBAN und einen gültigen Betrag eingeben.",
+        fxTitle: "Aktueller EUR → TRY Kurs",
+        fxUpdatedPrefix: "Aktualisiert:",
+        fxUpdatedPending: "Aktualisiert: wird geladen...",
+        fxUpdatedError:
+          "Aktualisiert: Kurs konnte nicht geladen werden, Demo-Wert wird genutzt.",
+        summaryTitle: "Aufladeübersicht",
+        summarySubtitle:
+          "Deine Demo-Aufladungen erscheinen sofort im Panel-Guthaben und in der Historie.",
+        summaryUserLabel: "Benutzer",
+        summaryEmailLabel: "E-Mail",
+        summaryBalanceLabel: "Aktuelles Guthaben",
+        summaryNote:
+          "Alle Aufladungen von dieser Seite erscheinen im Panel als \"Online-Aufladung\". Keine echte Bankanbindung.",
+        logoNote:
+          "Zahlungs- & Kreditlogos dienen nur zur Veranschaulichung in dieser Demo.",
+        footerNote:
+          "TAU Mensa-Bezahlsystem · Dieses Interface ist eine Demo und führt keine echten Zahlungen aus.",
+        prankTitle: "Hahahaha :)",
+        prankText:
+          "Du hast 31 TL gewählt – wir markieren das als spezielle \"witzige Zahl\" 😄\nVersuch es doch mit einem anderen Betrag.",
+        loanText:
+          "Die Idee, Mensa-Ausgaben über einen Ratenkredit zu finanzieren, wird hier nur als Spaß simuliert. Kein echter Kreditantrag.",
+        loanBtn: "📝 Kredit beantragen (Demo)",
+        loanStatusTitleLoading: "Antrag wird geprüft...",
+        loanStatusDescLoading:
+          "Unser System prüft gerade dein hypothetisches Mensa-Kreditprofil (natürlich nur ein Spaß 😄).",
+        loanStatusTitleDone: "Antrag \"genehmigt\" (Scherz)!",
+        loanStatusDescDone:
+          "Fazit: Die TAU-Mensa mag dich sowieso – ein extra Kredit ist nicht nötig. Plane dein Budget trotzdem bewusst :)",
+        langToggleTR: "🇹🇷 TR",
+        langToggleDE: "🇩🇪 DE",
+        curToggleTRY: "₺ → €",
+        curToggleEUR: "€ → ₺",
+        toPanel: "← Zum Panel",
+        toAccount: "Konto",
+        toTx: "Buchungen",
+        logout: "Abmelden"
+      }
+    };
+
+    function t(key) {
+      const dict = translations[currentLang] || translations.tr;
+      return dict[key] || key;
+    }
+
+    function updateToggleLabels() {
+      if (langToggleBtn) {
+        langToggleBtn.textContent =
+          currentLang === "tr" ? t("langToggleTR") : t("langToggleDE");
+      }
+      if (currencyToggleBtn) {
+        currencyToggleBtn.textContent =
+          currentCurrency === "TRY" ? t("curToggleTRY") : t("curToggleEUR");
+      }
+    }
+
+    function formatTL(amount) {
+      return "₺ " + amount.toFixed(2).replace(".", ",");
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang === "de" ? "de" : "tr";
+
+      brandSubEl.textContent = t("brandSub");
+      pageTitleEl.textContent = t("pageTitle");
+      pageSubtitleEl.textContent = t("pageSubtitle");
+      balanceLabelEl.textContent = t("balanceLabel");
+
+      document.getElementById("mainCardTitle").textContent = t("mainCardTitle");
+      document.getElementById("mainCardSubtitle").textContent = t("mainCardSubtitle");
+      document.getElementById("tabBtnCard").textContent = t("tabCard");
+      document.getElementById("tabBtnSepa").textContent = t("tabSepa");
+      document.getElementById("tabBtnLoan").textContent = t("tabLoan");
+
+      document.getElementById("brandLabel").textContent = t("brandLabel");
+      document.getElementById("cardPreviewLabel").textContent = t("cardPreviewLabel");
+      document.getElementById("cardHolderLabelMini").textContent = t("cardHolderMini");
+      document.getElementById("cardExpLabelMini").textContent = t("cardExpMini");
+      document.getElementById("cardNameLabel").textContent = t("cardNameLabel");
+      document.getElementById("cardNumberLabel").textContent = t("cardNumberLabel");
+      document.getElementById("cardExpiryLabel").textContent = t("cardExpiryLabel");
+      document.getElementById("cardCvcLabel").textContent = t("cardCvcLabel");
+      document.getElementById("cardAmountLabel").textContent = t("cardAmountLabel");
+      document.getElementById("installmentLabel").textContent = t("installmentLabel");
+      installmentInfo.textContent = t("installmentInfo");
+      cardPayBtn.textContent = t("cardBtn");
+      cardStatus.textContent = t("statusReady");
+
+      document.getElementById("sepaNameLabel").textContent = t("sepaNameLabel");
+      document.getElementById("sepaIbanLabel").textContent = t("sepaIbanLabel");
+      document.getElementById("sepaAmountLabel").textContent = t("sepaAmountLabel");
+      fxTitleEl.textContent = t("fxTitle");
+      fxUpdatedEl.textContent = t("fxUpdatedPending");
+      sepaPayBtn.textContent = t("sepaBtn");
+      sepaStatus.textContent = "";
+
+      // Loan
+      loanText.textContent = t("loanText");
+      loanApplyBtn.textContent = t("loanBtn");
+      loanStatusTitle.textContent = t("loanStatusTitleLoading");
+      loanStatusDesc.textContent = t("loanStatusDescLoading");
+
+      // Summary / footer
+      summaryTitleEl.textContent = t("summaryTitle");
+      summarySubtitleEl.textContent = t("summarySubtitle");
+      summaryUserLabelEl.textContent = t("summaryUserLabel");
+      summaryEmailLabelEl.textContent = t("summaryEmailLabel");
+      summaryBalanceLabelEl.textContent = t("summaryBalanceLabel");
+      summaryNoteEl.textContent = t("summaryNote");
+      logoNoteEl.textContent = t("logoNote");
+      footerNoteEl.textContent = t("footerNote");
+
+      // Nav buttons
+      toPanelBtn.textContent = t("toPanel");
+      toAccountBtn.textContent = t("toAccount");
+      toTxBtn.textContent = t("toTx");
+      logoutBtn.textContent = t("logout");
+
+      // Prank texts
+      document.getElementById("prankTitle").textContent = t("prankTitle");
+      document.getElementById("prankText").textContent = t("prankText");
+
+      updateToggleLabels();
+      updateSepaPreview();
+    }
+
+    function setBrand(brand) {
+      [brandPillVisa, brandPillMc, brandPillTroy].forEach((pill) => {
+        pill.classList.remove("active");
+      });
+      cardPreview.classList.remove(
+        "card-preview-visa",
+        "card-preview-mastercard",
+        "card-preview-troy"
+      );
+      if (brand === "mastercard") {
+        brandPillMc.classList.add("active");
+        cardPreview.classList.add("card-preview-mastercard");
+        cardBrandText.textContent = "MASTERCARD";
+      } else if (brand === "troy") {
+        brandPillTroy.classList.add("active");
+        cardPreview.classList.add("card-preview-troy");
+        cardBrandText.textContent = "TROY";
+      } else {
+        brandPillVisa.classList.add("active");
+        cardPreview.classList.add("card-preview-visa");
+        cardBrandText.textContent = "VISA";
+      }
+      updateCardMatchHint();
+    }
+
+    function cleanNumber(value) {
+      return (value || "").replace(/\D/g, "");
+    }
+
+    function formatCardNumber(value) {
+      const digits = cleanNumber(value).slice(0, 16);
+      return digits.replace(/(.{4})/g, "$1 ").trim();
+    }
+
+    function updateCardPreview() {
+      const name = cardNameInput.value.trim() || "AD SOYAD";
+      cardHolderPreview.textContent = name.toUpperCase();
+
+      const numFormatted = formatCardNumber(cardNumberInput.value);
+      cardNumberInput.value = numFormatted;
+      cardNumberPreview.textContent =
+        numFormatted || "•••• •••• •••• ••••";
+
+      let exp = cardExpiryInput.value.replace(/[^\d/]/g, "");
+      if (exp.length === 2 && !exp.includes("/")) {
+        exp = exp + "/";
+      }
+      cardExpiryInput.value = exp;
+      cardExpPreview.textContent = exp || "MM/YY";
+
+      updateCardMatchHint();
+    }
+
+    function updateCardMatchHint() {
+      const digits = cleanNumber(cardNumberInput.value);
+      const first = digits.charAt(0);
+      let selectedBrand = "visa";
+      if (brandPillMc.classList.contains("active")) selectedBrand = "mastercard";
+      if (brandPillTroy.classList.contains("active")) selectedBrand = "troy";
+
+      let hint = "";
+      let match = false;
+
+      if (!digits) {
+        hint = t("detectedNone");
+      } else if (first === "4") {
+        hint = t("detectedVisa");
+        match = selectedBrand === "visa";
+      } else if (first === "5") {
+        hint = t("detectedMc");
+        match = selectedBrand === "mastercard";
+      } else {
+        hint = t("detectedOther");
+        match = false;
+      }
+
+      cardDetectedHint.textContent = hint;
+      if (match) {
+        cardPreview.classList.add("card-preview-match");
+      } else {
+        cardPreview.classList.remove("card-preview-match");
+      }
+    }
+
+    function updateSepaPreview() {
+      const amountEur = Number(sepaAmountInput.value || 0);
+      if (!amountEur || amountEur <= 0) {
+        sepaAmountPreview.textContent = "";
+        return;
+      }
+      const tl = amountEur * currentFxRate;
+      sepaAmountPreview.textContent =
+        t("sepaPreviewPrefix") + " " + formatTL(tl) + " " + t("sepaPreviewSuffix");
+    }
+
+    // GIF modal helpers
+    function showPaymentGif(kind) {
+      if (!paymentGifBackdrop || !paymentGifImg) return;
+
+      const isDe = currentLang === "de";
+      let titleTr = "";
+      let titleDe = "";
+      let descTr = "Bu animasyon sadece demo amaçlıdır.";
+      let descDe = "Diese Animation ist nur eine Demo.";
+
+      if (kind === "visa") {
+        paymentGifImg.src = VISA_GIF_URL;
+        titleTr = "Visa ile ödeme işleniyor...";
+        titleDe = "Visa-Zahlung wird verarbeitet...";
+      } else if (kind === "mastercard") {
+        paymentGifImg.src = MC_GIF_URL;
+        titleTr = "Mastercard ile ödeme işleniyor...";
+        titleDe = "Mastercard-Zahlung wird verarbeitet...";
+      } else if (kind === "loan") {
+        paymentGifImg.src = LOAN_GIF_URL;
+        titleTr = "Kredi başvurun değerlendiriliyor...";
+        titleDe = "Dein Kreditantrag wird geprüft...";
+        descTr = "Bu kredi başvurusu tamamen şaka, gerçek bankaya iletilmez.";
+        descDe = "Dieser Kreditantrag ist nur Spaß und wird nirgendwohin gesendet.";
+      } else {
+        paymentGifImg.src = VISA_GIF_URL;
+        titleTr = "İşlem yapılıyor...";
+        titleDe = "Vorgang wird ausgeführt...";
+      }
+
+      paymentGifTitle.textContent = isDe ? titleDe : titleTr;
+      paymentGifDesc.textContent = isDe ? descDe : descTr;
+
+      paymentGifBackdrop.classList.add("visible");
+      paymentGifBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function hidePaymentGif() {
+      if (!paymentGifBackdrop) return;
+      paymentGifBackdrop.classList.remove("visible");
+      paymentGifBackdrop.setAttribute("aria-hidden", "true");
+      if (paymentGifImg) paymentGifImg.src = "";
+    }
+
+    // Tab switching
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        tabButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        Object.keys(tabPanels).forEach((key) => {
+          tabPanels[key].classList.toggle("active", key === tab);
+        });
+      });
+    });
+
+    // Brand pills click
+    [brandPillVisa, brandPillMc, brandPillTroy].forEach((pill) => {
+      pill.addEventListener("click", () => {
+        setBrand(pill.dataset.brand);
+      });
+    });
+
+    // Card inputs
+    cardNameInput.addEventListener("input", updateCardPreview);
+    cardNumberInput.addEventListener("input", updateCardPreview);
+    cardExpiryInput.addEventListener("input", updateCardPreview);
+    cardCvcInput.addEventListener("input", () => {
+      const val = cleanNumber(cardCvcInput.value).slice(0, 4);
+      cardCvcInput.value = val;
+    });
+
+    // SEPA amount
+    sepaAmountInput.addEventListener("input", updateSepaPreview);
+
+    // Lang / currency toggles
+    langToggleBtn.addEventListener("click", () => {
+      currentLang = currentLang === "tr" ? "de" : "tr";
+      try {
+        localStorage.setItem("tau-lang", currentLang);
+      } catch (e) {}
+      applyLanguage();
+    });
+
+    currencyToggleBtn.addEventListener("click", () => {
+      currentCurrency = currentCurrency === "TRY" ? "EUR" : "TRY";
+      try {
+        localStorage.setItem("tau-currency", currentCurrency);
+      } catch (e) {}
+      updateToggleLabels();
+    });
+
+    // Nav
+    logoutBtn.addEventListener("click", async () => {
+      await fetch("/api/logout", { method: "POST" });
+      window.location.href = "/";
+    });
+    toPanelBtn.addEventListener("click", () => {
+      window.location.href = "/panel.html";
+    });
+    toAccountBtn.addEventListener("click", () => {
+      window.location.href = "/account.html";
+    });
+    toTxBtn.addEventListener("click", () => {
+      window.location.href = "/transactions.html";
+    });
+
+    // 31 TL şakası modal kontrolü
+    function openPrankModal() {
+      prankBackdrop.classList.add("visible");
+      prankBackdrop.setAttribute("aria-hidden", "false");
+    }
+    function closePrankModal() {
+      prankBackdrop.classList.remove("visible");
+      prankBackdrop.setAttribute("aria-hidden", "true");
+    }
+    prankClose.addEventListener("click", closePrankModal);
+    prankBackdrop.addEventListener("click", (e) => {
+      if (e.target === prankBackdrop) closePrankModal();
+    });
+
+    // GIF modal events
+    if (paymentGifClose) {
+      paymentGifClose.addEventListener("click", hidePaymentGif);
+    }
+    if (paymentGifBackdrop) {
+      paymentGifBackdrop.addEventListener("click", (e) => {
+        if (e.target === paymentGifBackdrop) hidePaymentGif();
+      });
+    }
+
+    // Card ödeme
+    cardPayBtn.addEventListener("click", async () => {
+      const amount = Number(cardAmountInput.value || 0);
+      cardStatus.classList.remove("error", "success");
+
+      if (!amount || amount <= 0) {
+        cardStatus.textContent = t("statusInvalid");
+        cardStatus.classList.add("error");
+        return;
+      }
+
+      // 31 TL şakası
+      if (Math.round(amount) === 31) {
+        cardStatus.textContent = "";
+        openPrankModal();
+        return;
+      }
+
+      const brand = brandPillMc.classList.contains("active")
+        ? "mastercard"
+        : brandPillTroy.classList.contains("active")
+        ? "troy"
+        : "visa";
+
+      cardStatus.textContent = t("statusSending");
+
+      if (brand === "visa" || brand === "mastercard") {
+        showPaymentGif(brand);
+      }
+
+      try {
+        const res = await fetch("/api/demo-load", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount,
+            source: "card",
+            brand,
+            installments: Number(installmentSelect.value || 1)
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          cardStatus.textContent = data.error || t("statusError");
+          cardStatus.classList.add("error");
+          return;
+        }
+        cardStatus.textContent = t("statusSuccess");
+        cardStatus.classList.add("success");
+        await loadUser(); // Bakiyeyi senkron tut
+      } catch (err) {
+        cardStatus.textContent = t("statusServerError");
+        cardStatus.classList.add("error");
+      } finally {
+        if (brand === "visa" || brand === "mastercard") {
+          setTimeout(hidePaymentGif, 1200);
+        }
+      }
+    });
+
+    // SEPA ödeme
+    sepaPayBtn.addEventListener("click", async () => {
+      const amountEur = Number(sepaAmountInput.value || 0);
+      const iban = sepaIbanInput.value.trim();
+      sepaStatus.classList.remove("error", "success");
+
+      if (!amountEur || amountEur <= 0 || !iban || !iban.toUpperCase().startsWith("DE")) {
+        sepaStatus.textContent = t("sepaStatusInvalid");
+        sepaStatus.classList.add("error");
+        return;
+      }
+
+      const amountTl = amountEur * currentFxRate;
+
+      // 31 TL şakası: TL karşılığı 31'e yakınsa yakala
+      if (Math.round(amountTl) === 31) {
+        sepaStatus.textContent = "";
+        openPrankModal();
+        return;
+      }
+
+      sepaStatus.textContent = t("statusSending");
+      try {
+        const res = await fetch("/api/demo-load", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: amountTl,
+            source: "sepa",
+            iban,
+            eur_amount: amountEur,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          sepaStatus.textContent = data.error || t("statusError");
+          sepaStatus.classList.add("error");
+          return;
+        }
+        sepaStatus.textContent = t("statusSuccess");
+        sepaStatus.classList.add("success");
+        await loadUser();
+      } catch (err) {
+        sepaStatus.textContent = t("statusServerError");
+        sepaStatus.classList.add("error");
+      }
+    });
+
+    // Kredi başvurusu (şaka) + GIF modal
+    loanApplyBtn.addEventListener("click", () => {
+      loanStatusBox.style.display = "block";
+      loanSpinner.style.display = "inline-block";
+      loanStatusTitle.textContent = t("loanStatusTitleLoading");
+      loanStatusDesc.textContent = t("loanStatusDescLoading");
+
+      showPaymentGif("loan");
+
+      setTimeout(() => {
+        loanSpinner.style.display = "none";
+        loanStatusTitle.textContent = t("loanStatusTitleDone");
+        loanStatusDesc.textContent = t("loanStatusDescDone");
+        hidePaymentGif();
+      }, 2500);
+    });
+
+    async function loadFxRate() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=EUR&symbols=TRY");
+        const data = await res.json();
+        const rate = data && data.rates && data.rates.TRY;
+        if (rate) {
+          currentFxRate = rate;
+          fxRateEl.textContent = "1 € ≈ " + rate.toFixed(2) + " ₺";
+          const now = new Date();
+          const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+          fxUpdatedEl.textContent =
+            t("fxUpdatedPrefix") + " " + now.toLocaleString(locale);
+          updateSepaPreview();
+          return;
+        }
+        throw new Error("no rate");
+      } catch (e) {
+        currentFxRate = EUR_RATE_DEFAULT;
+        fxRateEl.textContent = "1 € ≈ " + EUR_RATE_DEFAULT.toFixed(2) + " ₺ (demo)";
+        fxUpdatedEl.textContent = t("fxUpdatedError");
+        updateSepaPreview();
+      }
+    }
+
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.status === 401) {
+          window.location.href = "/";
+          return;
+        }
+        const data = await res.json();
+        currentUser = data.user;
+
+        const balanceTl = currentUser.balance || 0;
+        balanceValueEl.textContent = formatTL(balanceTl);
+        summaryBalanceValueEl.textContent = formatTL(balanceTl);
+        summaryUserValueEl.textContent = currentUser.name || "—";
+        summaryEmailValueEl.textContent = currentUser.email || "—";
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    (function initLangCurrency() {
+      try {
+        const savedLang = localStorage.getItem("tau-lang");
+        currentLang = savedLang === "de" ? "de" : "tr";
+        const savedCur = localStorage.getItem("tau-currency");
+        currentCurrency = savedCur === "EUR" ? "EUR" : "TRY";
+      } catch (e) {
+        currentLang = "tr";
+        currentCurrency = "TRY";
+      }
+      updateToggleLabels();
+    })();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLanguage();
+      updateCardPreview();
+      updateSepaPreview();
+      loadUser();
+      loadFxRate();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAÜ Yemekhane · Hesap Hareketleri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --subtle: #6e6e73;
+      --border-soft: rgba(0,0,0,0.08);
+      --shadow-soft: 0 14px 40px rgba(0,0,0,0.12);
+      --accent: #0071e3;
+      --accent-soft: rgba(0,113,227,0.08);
+      --load: #27ae60;
+      --spend: #d70015;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; height:100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        system-ui, -system-ui, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,113,227,0.08) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(39,174,96,0.08) 0, transparent 55%),
+        #f5f5f7;
+      color: var(--ink);
+    }
+
+    .top-nav {
+      max-width: 1100px;
+      margin: 16px auto 0;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--subtle);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo-img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    .brand-text-main {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #1d1d1f;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--subtle);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .user-name-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(0,0,0,0.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #1d1d1f;
+      font-size: 12px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.9);
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #1d1d1f;
+      transition: background 140ms ease, transform 120ms ease, box-shadow 120ms ease;
+    }
+    .nav-pill:hover {
+      background:#f5f5f7;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+    }
+    .nav-secondary {
+      border-color: rgba(0,113,227,0.35);
+      color: #0071e3;
+    }
+    .nav-danger {
+      border-color: rgba(215,0,21,0.4);
+      color: #d70015;
+    }
+
+    .page-wrapper {
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px 40px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 26px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 22px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -80px;
+      background:
+        radial-gradient(circle at 0 0, rgba(0,113,227,0.08) 0, transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(39,174,96,0.08) 0, transparent 55%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 18px;
+    }
+    .page-section-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--subtle);
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+      color: #1d1d1f;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--subtle);
+      max-width: 520px;
+    }
+
+    .summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: var(--subtle);
+    }
+    .summary-chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f5f5f7;
+      border: 1px solid rgba(0,0,0,0.04);
+      min-width: 0;
+    }
+    .summary-chip strong {
+      color: #1d1d1f;
+      font-weight: 600;
+    }
+    .summary-net {
+      border-color: rgba(0,113,227,0.24);
+      background: rgba(0,113,227,0.04);
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .filter-group {
+      display: inline-flex;
+      border-radius: 999px;
+      background: #f5f5f7;
+      padding: 3px;
+      gap: 2px;
+    }
+    .filter-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #3a3a3c;
+      transition: background 120ms ease, box-shadow 120ms ease, color 120ms ease;
+    }
+    .filter-btn.active {
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      color: #111111;
+    }
+
+    .toolbar-left {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px;
+    }
+
+    .toolbar-row-secondary {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .filter-select-group {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    .select-pill {
+      border-radius:999px;
+      padding:6px 10px;
+      border:1px solid rgba(0,0,0,0.12);
+      background:#f5f5f7;
+      font-size:12px;
+      min-width:150px;
+      outline:none;
+    }
+
+    .search-group {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .search-input {
+      width: 100%;
+      max-width: 260px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #f5f5f7;
+      font-size: 13px;
+      outline: none;
+      transition: border 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+    .search-input::placeholder {
+      color: #9f9fa3;
+    }
+    .search-input:focus {
+      background: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.18);
+    }
+
+    .export-group {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .btn-export {
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.12);
+      background:#ffffff;
+      padding:5px 12px;
+      font-size:12px;
+      cursor:pointer;
+      color:#1d1d1f;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      transition: background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+    }
+    .btn-export:hover {
+      background:#f5f5f7;
+      box-shadow:0 4px 10px rgba(0,0,0,0.06);
+      transform:translateY(-1px);
+    }
+
+    .chart-card {
+      margin-top: 4px;
+      margin-bottom: 8px;
+      padding: 10px 12px 14px;
+      border-radius: 18px;
+      background: #f5f5f7;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .chart-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:8px;
+      margin-bottom:6px;
+    }
+    .chart-title {
+      font-size:13px;
+      font-weight:600;
+    }
+    .chart-subtitle {
+      font-size:11px;
+      color:var(--subtle);
+    }
+    .chart-container {
+      position:relative;
+      width:100%;
+      height:160px;
+    }
+
+    .tx-list-wrapper {
+      margin-top: 6px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .tx-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .tx-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 13px;
+    }
+    .tx-item:last-child {
+      border-bottom: none;
+    }
+
+    .tx-left {
+      min-width: 0;
+    }
+    .tx-title {
+      font-weight: 500;
+      color: #1d1d1f;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 320px;
+    }
+    .tx-meta {
+      font-size: 11px;
+      color: var(--subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .tx-type-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      background: #f5f5f7;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .tx-type-pill.load {
+      color: var(--load);
+      border-color: rgba(39,174,96,0.25);
+      background: rgba(39,174,96,0.06);
+    }
+    .tx-type-pill.spend {
+      color: var(--spend);
+      border-color: rgba(215,0,21,0.25);
+      background: rgba(215,0,21,0.06);
+    }
+
+    .tx-right {
+      text-align: right;
+      min-width: 120px;
+      margin-left: 12px;
+    }
+    .tx-amount {
+      font-weight: 600;
+    }
+    .tx-amount.positive {
+      color: var(--load);
+    }
+    .tx-amount.negative {
+      color: var(--spend);
+    }
+    .tx-amount.zero {
+      color: #3a3a3c;
+    }
+
+    .tx-empty {
+      text-align: center;
+      padding: 32px 12px 16px;
+      color: var(--subtle);
+      font-size: 13px;
+    }
+    .tx-empty h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: #1d1d1f;
+    }
+    .tx-empty p {
+      margin: 0;
+    }
+
+    .footer {
+      max-width: 1100px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+      font-size: 11px;
+      color: var(--subtle);
+    }
+    .credit-note {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .credit-note img.isbank-logo {
+      height: 16px;
+      width: auto;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .top-nav {
+        padding-inline: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .nav-right {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .page-wrapper {
+        padding-inline: 12px;
+      }
+      .card {
+        border-radius: 22px;
+        padding-inline: 18px;
+      }
+      .tx-right {
+        min-width: 90px;
+      }
+      .tx-title {
+        max-width: 220px;
+      }
+      .toolbar-left {
+        width:100%;
+      }
+      .search-group {
+        width:100%;
+        justify-content:flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-nav">
+    <div class="brand">
+      <img
+        class="brand-logo-img"
+        src="https://3fcampus.tau.edu.tr/uploads/cms/pr.tau/dgFfmceK6A.png"
+        alt="Türk-Alman Üniversitesi Logosu"
+      />
+      <div>
+        <div class="brand-text-main">Türk-Alman Üniversitesi</div>
+        <div class="brand-text-sub" id="brandSub">Yemekhane · Hesap hareketleri</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span id="userNameTop" class="user-name-pill">Kullanıcı</span>
+      <button type="button" id="langToggle" class="nav-pill">🇹🇷 TR</button>
+      <button type="button" id="currencyToggle" class="nav-pill">₺ → €</button>
+      <button type="button" id="backToPanel" class="nav-pill nav-secondary">← Panel</button>
+      <button type="button" id="logoutBtn" class="nav-pill nav-danger">Çıkış</button>
+    </div>
+  </header>
+
+  <main class="page-wrapper">
+    <section class="card">
+      <div class="card-header">
+        <div class="page-section-label" id="pageSectionLabel">Hesap · Hareketler</div>
+        <h1 class="page-title" id="pageTitle">Tüm işlemlerinin detaylı listesi.</h1>
+        <p class="page-subtitle" id="pageSubtitle">
+          Son harcamalarını ve yüklemelerini tarih sırasıyla görebilir, filtreleyebilir ve
+          TL / Euro olarak inceleyebilirsin.
+        </p>
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-chip" id="summaryCount">
+          <strong>0</strong> işlem listeleniyor
+        </div>
+        <div class="summary-chip" id="summaryTotalLoad">
+          Toplam yükleme: <strong>₺ 0,00</strong>
+        </div>
+        <div class="summary-chip" id="summaryTotalSpend">
+          Toplam harcama: <strong>₺ 0,00</strong>
+        </div>
+        <div class="summary-chip summary-net" id="summaryNet">
+          Net değişim: <strong>₺ 0,00</strong>
+        </div>
+      </div>
+
+      <div class="toolbar-row">
+        <div class="toolbar-left">
+          <div class="filter-group">
+            <button class="filter-btn active" data-filter="all" id="filterAll">Tümü</button>
+            <button class="filter-btn" data-filter="load" id="filterLoad">Yüklemeler</button>
+            <button class="filter-btn" data-filter="spend" id="filterSpend">Harcamalar</button>
+          </div>
+        </div>
+        <div class="search-group">
+          <input
+            type="search"
+            id="searchInput"
+            class="search-input"
+            placeholder="İşlem ara (tutar, açıklama...)"
+          />
+        </div>
+      </div>
+
+      <div class="toolbar-row-secondary">
+        <div class="filter-select-group">
+          <select id="dateRange" class="select-pill">
+            <option value="all" data-key="dateRangeAll">Tüm zamanlar</option>
+            <option value="7d" data-key="dateRange7d">Son 7 gün</option>
+            <option value="30d" data-key="dateRange30d">Son 30 gün</option>
+          </select>
+          <select id="methodFilter" class="select-pill">
+            <option value="all" data-key="methodAll">Tüm yöntemler</option>
+            <option value="sepa" data-key="methodSepa">Sadece SEPA</option>
+            <option value="card" data-key="methodCard">Sadece kart</option>
+            <option value="mensa" data-key="methodMensa">Yemekhane harcamaları</option>
+          </select>
+        </div>
+        <div class="export-group">
+          <button type="button" id="exportCsv" class="btn-export">⬇ CSV indir</button>
+          <button type="button" id="exportPdf" class="btn-export">📝 PDF / Yazdır</button>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title" id="chartTitle">Günlük yemek harcaması</div>
+          <div class="chart-subtitle" id="chartSubtitle">Son 14 gün, sadece harcamalar, ₺ cinsinden.</div>
+        </div>
+        <div class="chart-container">
+          <canvas id="txChart"></canvas>
+        </div>
+      </div>
+
+      <div class="tx-list-wrapper">
+        <ul class="tx-list" id="txList">
+          <li class="tx-item">
+            <div class="tx-left">
+              <div class="tx-title">İşlemler yükleniyor...</div>
+              <div class="tx-meta">
+                <span>—</span>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amount zero">₺ 0,00</div>
+            </div>
+          </li>
+        </ul>
+        <div class="tx-empty" id="txEmpty" style="display:none;">
+          <h3 id="txEmptyTitle">Henüz işlem yok</h3>
+          <p id="txEmptyText">
+            İlk yüklemeyi yaparak hareketleri burada görebilirsin.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="credit-note">
+      <span id="creditPrefix">Kredi hizmetlerimiz</span>
+      <img
+        class="isbank-logo"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg/2560px-T%C3%BCrkiye_%C4%B0%C5%9F_Bankas%C4%B1_logo.svg.png"
+        alt="Türkiye İş Bankası Logosu"
+      />
+      <span id="creditSuffix">tarafından sağlanmaktadır.</span>
+    </div>
+  </footer>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const CURRENCY_EUR_RATE = 49; // demo kur
+    let currentCurrency = "TRY";
+    let currentLang = "tr";
+    let allTransactions = [];
+    let currentFilter = "all";
+    let currentDateRange = "all"; // all, 7d, 30d
+    let currentMethodFilter = "all"; // all, sepa, card, mensa
+    let txChart = null;
+
+    const langToggleBtn = document.getElementById("langToggle");
+    const currencyToggleBtn = document.getElementById("currencyToggle");
+    const backToPanelBtn = document.getElementById("backToPanel");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userNameTopEl = document.getElementById("userNameTop");
+    const searchInput = document.getElementById("searchInput");
+    const txListEl = document.getElementById("txList");
+    const txEmptyEl = document.getElementById("txEmpty");
+
+    const summaryCountEl = document.getElementById("summaryCount");
+    const summaryTotalLoadEl = document.getElementById("summaryTotalLoad");
+    const summaryTotalSpendEl = document.getElementById("summaryTotalSpend");
+    const summaryNetEl = document.getElementById("summaryNet");
+
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const dateRangeSelect = document.getElementById("dateRange");
+    const methodFilterSelect = document.getElementById("methodFilter");
+    const exportCsvBtn = document.getElementById("exportCsv");
+    const exportPdfBtn = document.getElementById("exportPdf");
+    const chartTitleEl = document.getElementById("chartTitle");
+    const chartSubtitleEl = document.getElementById("chartSubtitle");
+
+    const translations = {
+      tr: {
+        brandSub: "Yemekhane · Hesap hareketleri",
+        navBackToPanel: "← Panel",
+        logout: "Çıkış",
+        pageSectionLabel: "Hesap · Hareketler",
+        pageTitle: "Tüm işlemlerinin detaylı listesi.",
+        pageSubtitle:
+          "Son harcamalarını ve yüklemelerini tarih sırasıyla görebilir, filtreleyebilir ve TL / Euro olarak inceleyebilirsin.",
+        filterAll: "Tümü",
+        filterLoad: "Yüklemeler",
+        filterSpend: "Harcamalar",
+        searchPlaceholder: "İşlem ara (tutar, açıklama...)",
+        summaryCount: "{n} işlem listeleniyor",
+        summaryTotalLoad: "Toplam yükleme: {amount}",
+        summaryTotalSpend: "Toplam harcama: {amount}",
+        summaryNet: "Net değişim: {amount}",
+        labelLoad: "Yükleme",
+        labelSpend: "Harcama",
+        txEmptyTitle: "Henüz işlem yok",
+        txEmptyText: "İlk yüklemeyi yaparak hareketleri burada görebilirsin.",
+        creditPrefix: "Kredi hizmetlerimiz",
+        creditSuffix: "tarafından sağlanmaktadır.",
+        loadTitleFallback: "Online Yükleme",
+        spendTitleFallback: "Yemekhane Harcaması",
+        dateRangeAll: "Tüm zamanlar",
+        dateRange7d: "Son 7 gün",
+        dateRange30d: "Son 30 gün",
+        methodAll: "Tüm yöntemler",
+        methodSepa: "Sadece SEPA",
+        methodCard: "Sadece kart",
+        methodMensa: "Yemekhane harcamaları",
+        exportCsv: "⬇ CSV indir",
+        exportPdf: "📝 PDF / Yazdır",
+        chartTitle: "Günlük yemek harcaması",
+        chartSubtitle: "Son {days} gün, sadece harcamalar, {cur} cinsinden.",
+        sourceSepa: "SEPA",
+        sourceCard: "Kart",
+        sourceMensa: "Yemekhane",
+        sourceOther: "Diğer",
+      },
+      de: {
+        brandSub: "Mensa · Kontobewegungen",
+        navBackToPanel: "← Panel",
+        logout: "Abmelden",
+        pageSectionLabel: "Konto · Bewegungen",
+        pageTitle: "Detaillierte Übersicht über alle Buchungen.",
+        pageSubtitle:
+          "Sieh dir deine letzten Einzahlungen und Ausgaben chronologisch an, filtere sie und wechsle zwischen TL und Euro.",
+        filterAll: "Alle",
+        filterLoad: "Einzahlungen",
+        filterSpend: "Ausgaben",
+        searchPlaceholder: "Buchung suchen (Betrag, Beschreibung...)",
+        summaryCount: "{n} Buchungen angezeigt",
+        summaryTotalLoad: "Gesamte Einzahlungen: {amount}",
+        summaryTotalSpend: "Gesamte Ausgaben: {amount}",
+        summaryNet: "Nettoveränderung: {amount}",
+        labelLoad: "Einzahlung",
+        labelSpend: "Ausgabe",
+        txEmptyTitle: "Noch keine Buchungen",
+        txEmptyText:
+          "Sobald du das erste Guthaben auflädst, erscheinen deine Bewegungen hier.",
+        creditPrefix: "Unsere Kreditdienstleistungen werden von",
+        creditSuffix: "bereitgestellt.",
+        loadTitleFallback: "Online-Aufladung",
+        spendTitleFallback: "Mensa-Ausgabe",
+        dateRangeAll: "Gesamter Zeitraum",
+        dateRange7d: "Letzte 7 Tage",
+        dateRange30d: "Letzte 30 Tage",
+        methodAll: "Alle Methoden",
+        methodSepa: "Nur SEPA",
+        methodCard: "Nur Karte",
+        methodMensa: "Mensa-Ausgaben",
+        exportCsv: "⬇ CSV exportieren",
+        exportPdf: "📝 PDF / Drucken",
+        chartTitle: "Tägliche Mensa-Ausgaben",
+        chartSubtitle: "Letzte {days} Tage, nur Ausgaben in {cur}.",
+        sourceSepa: "SEPA",
+        sourceCard: "Karte",
+        sourceMensa: "Mensa",
+        sourceOther: "Sonstige",
+      },
+    };
+
+    function t(key, vars = {}) {
+      const dict = translations[currentLang] || translations.tr;
+      let str = dict[key] || key;
+      for (const k in vars) {
+        str = str.replace(`{${k}}`, vars[k]);
+      }
+      return str;
+    }
+
+    function formatAmount(amountTL) {
+      let value = amountTL;
+      let symbol = "₺";
+      if (currentCurrency === "EUR") {
+        value = amountTL / CURRENCY_EUR_RATE;
+        symbol = "€";
+      }
+      const sign = value < 0 ? "-" : value > 0 ? "+" : "";
+      const abs = Math.abs(value);
+      const formatted = abs.toFixed(2).replace(".", ",");
+      return sign + symbol + " " + formatted;
+    }
+
+    function getSourceLabel(tx) {
+      const src = (tx.source || "").toLowerCase();
+      if (!src) return "";
+      if (src === "sepa") return t("sourceSepa");
+      if (src === "card" || src === "visa" || src === "mastercard") return t("sourceCard");
+      if (src === "mensa" || src === "meal" || src === "qr") return t("sourceMensa");
+      return t("sourceOther");
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang === "de" ? "de" : "tr";
+
+      const el = (id) => document.getElementById(id);
+      const dict = translations[lang] || translations.tr;
+
+      if (el("brandSub")) el("brandSub").textContent = dict.brandSub;
+      if (backToPanelBtn) backToPanelBtn.textContent = dict.navBackToPanel;
+      if (logoutBtn) logoutBtn.textContent = dict.logout;
+      if (el("pageSectionLabel"))
+        el("pageSectionLabel").textContent = dict.pageSectionLabel;
+      if (el("pageTitle")) el("pageTitle").textContent = dict.pageTitle;
+      if (el("pageSubtitle")) el("pageSubtitle").textContent = dict.pageSubtitle;
+
+      if (el("filterAll")) el("filterAll").textContent = dict.filterAll;
+      if (el("filterLoad")) el("filterLoad").textContent = dict.filterLoad;
+      if (el("filterSpend")) el("filterSpend").textContent = dict.filterSpend;
+
+      if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+      if (el("txEmptyTitle")) el("txEmptyTitle").textContent = dict.txEmptyTitle;
+      if (el("txEmptyText")) el("txEmptyText").textContent = dict.txEmptyText;
+
+      const creditPrefix = el("creditPrefix");
+      const creditSuffix = el("creditSuffix");
+      if (creditPrefix) creditPrefix.textContent = dict.creditPrefix;
+      if (creditSuffix) creditSuffix.textContent = dict.creditSuffix;
+
+      if (langToggleBtn) {
+        langToggleBtn.textContent = lang === "tr" ? "🇹🇷 TR" : "🇩🇪 DE";
+      }
+
+      // Tarih aralığı & yöntem select
+      if (dateRangeSelect) {
+        const optAll = dateRangeSelect.querySelector('option[value="all"]');
+        const opt7 = dateRangeSelect.querySelector('option[value="7d"]');
+        const opt30 = dateRangeSelect.querySelector('option[value="30d"]');
+        if (optAll) optAll.textContent = dict.dateRangeAll;
+        if (opt7) opt7.textContent = dict.dateRange7d;
+        if (opt30) opt30.textContent = dict.dateRange30d;
+      }
+      if (methodFilterSelect) {
+        const optAll = methodFilterSelect.querySelector('option[value="all"]');
+        const optSepa = methodFilterSelect.querySelector('option[value="sepa"]');
+        const optCard = methodFilterSelect.querySelector('option[value="card"]');
+        const optMensa = methodFilterSelect.querySelector('option[value="mensa"]');
+        if (optAll) optAll.textContent = dict.methodAll;
+        if (optSepa) optSepa.textContent = dict.methodSepa;
+        if (optCard) optCard.textContent = dict.methodCard;
+        if (optMensa) optMensa.textContent = dict.methodMensa;
+      }
+
+      if (exportCsvBtn) exportCsvBtn.textContent = dict.exportCsv;
+      if (exportPdfBtn) exportPdfBtn.textContent = dict.exportPdf;
+
+      if (chartTitleEl) chartTitleEl.textContent = dict.chartTitle;
+
+      // Özet & liste & grafik
+      renderSummary();
+      renderTransactions();
+      updateChart();
+    }
+
+    function updateCurrencyToggleLabel() {
+      if (!currencyToggleBtn) return;
+      currencyToggleBtn.textContent =
+        currentCurrency === "TRY" ? "₺ → €" : "€ → ₺";
+    }
+
+    function getFilteredTransactions() {
+      let filtered = allTransactions.slice();
+
+      // Yükleme / harcama tipi
+      if (currentFilter === "load") {
+        filtered = filtered.filter((tx) => tx.type === "load");
+      } else if (currentFilter === "spend") {
+        filtered = filtered.filter((tx) => tx.type === "spend");
+      }
+
+      // Yöntem filtresi (SEPA / kart / mensa)
+      if (currentMethodFilter !== "all") {
+        filtered = filtered.filter((tx) => {
+          const src = (tx.source || "").toLowerCase();
+          if (currentMethodFilter === "sepa") {
+            return src === "sepa";
+          }
+          if (currentMethodFilter === "card") {
+            return src === "card" || src === "visa" || src === "mastercard";
+          }
+          if (currentMethodFilter === "mensa") {
+            return src === "mensa" || src === "meal" || src === "qr";
+          }
+          return true;
+        });
+      }
+
+      // Tarih aralığı (son 7 / 30 gün)
+      if (currentDateRange !== "all") {
+        const days = currentDateRange === "7d" ? 7 : 30;
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        filtered = filtered.filter((tx) => {
+          if (!tx.created_at) return true;
+          const d = new Date(tx.created_at);
+          if (isNaN(d)) return true;
+          const d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          const diffDays = (today - d0) / (1000 * 60 * 60 * 24);
+          return diffDays >= 0 && diffDays < days;
+        });
+      }
+
+      // Arama
+      const term = (searchInput?.value || "").trim().toLowerCase();
+      if (term) {
+        filtered = filtered.filter((tx) => {
+          const desc = (tx.description || "").toLowerCase();
+          const amountStr = formatAmount(tx.amount).toLowerCase();
+          const rawAmount = String(tx.amount || "").toLowerCase();
+          return (
+            desc.includes(term) ||
+            amountStr.includes(term) ||
+            rawAmount.includes(term)
+          );
+        });
+      }
+      return filtered;
+    }
+
+    function renderSummary() {
+      if (!summaryCountEl) return;
+      const filtered = getFilteredTransactions();
+      const count = filtered.length;
+
+      let totalLoad = 0;
+      let totalSpend = 0; // negatif toplam
+      filtered.forEach((tx) => {
+        if (tx.type === "load") {
+          totalLoad += tx.amount;
+        } else if (tx.type === "spend") {
+          totalSpend += tx.amount;
+        }
+      });
+      const net = totalLoad + totalSpend;
+
+      summaryCountEl.innerHTML = t("summaryCount", {
+        n: "<strong>" + count + "</strong>",
+      });
+
+      summaryTotalLoadEl.innerHTML = t("summaryTotalLoad", {
+        amount: "<strong>" + formatAmount(totalLoad) + "</strong>",
+      });
+
+      summaryTotalSpendEl.innerHTML = t("summaryTotalSpend", {
+        amount: "<strong>" + formatAmount(totalSpend) + "</strong>",
+      });
+
+      summaryNetEl.innerHTML = t("summaryNet", {
+        amount: "<strong>" + formatAmount(net) + "</strong>",
+      });
+    }
+
+    function renderTransactions() {
+      if (!txListEl || !txEmptyEl) return;
+
+      const filtered = getFilteredTransactions();
+
+      txListEl.innerHTML = "";
+      if (filtered.length === 0) {
+        txEmptyEl.style.display = "block";
+        return;
+      }
+      txEmptyEl.style.display = "none";
+
+      const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+
+      filtered.forEach((tx) => {
+        const li = document.createElement("li");
+        li.className = "tx-item";
+
+        const left = document.createElement("div");
+        left.className = "tx-left";
+
+        const title = document.createElement("div");
+        title.className = "tx-title";
+        let label = tx.description;
+        if (!label || label.trim() === "") {
+          label =
+            tx.type === "load"
+              ? t("loadTitleFallback")
+              : t("spendTitleFallback");
+        }
+        title.textContent = label;
+
+        const meta = document.createElement("div");
+        meta.className = "tx-meta";
+
+        const dateSpan = document.createElement("span");
+        const date = new Date(tx.created_at);
+        dateSpan.textContent = date.toLocaleString(locale);
+        meta.appendChild(dateSpan);
+
+        const typeSpan = document.createElement("span");
+        typeSpan.className =
+          "tx-type-pill " + (tx.type === "load" ? "load" : "spend");
+        typeSpan.textContent =
+          tx.type === "load" ? t("labelLoad") : t("labelSpend");
+        meta.appendChild(typeSpan);
+
+        const srcLabel = getSourceLabel(tx);
+        if (srcLabel) {
+          const srcSpan = document.createElement("span");
+          srcSpan.textContent = srcLabel;
+          meta.appendChild(srcSpan);
+        }
+
+        left.appendChild(title);
+        left.appendChild(meta);
+
+        const right = document.createElement("div");
+        right.className = "tx-right";
+        const amountDiv = document.createElement("div");
+        amountDiv.className = "tx-amount";
+        if (tx.amount > 0) amountDiv.classList.add("positive");
+        else if (tx.amount < 0) amountDiv.classList.add("negative");
+        else amountDiv.classList.add("zero");
+
+        amountDiv.textContent = formatAmount(tx.amount);
+        right.appendChild(amountDiv);
+
+        li.appendChild(left);
+        li.appendChild(right);
+
+        txListEl.appendChild(li);
+      });
+    }
+
+    function buildChartData() {
+      const days =
+        currentDateRange === "7d"
+          ? 7
+          : currentDateRange === "30d"
+          ? 30
+          : 14;
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const buckets = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        d.setHours(0,0,0,0);
+        buckets.push({ date: d, amount: 0 });
+      }
+
+      const spendTx = allTransactions.filter((tx) => tx.type === "spend");
+      spendTx.forEach((tx) => {
+        if (!tx.created_at) return;
+        const d = new Date(tx.created_at);
+        if (isNaN(d)) return;
+        const d0 = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const diffDays = Math.floor((today - d0) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0 || diffDays >= days) return;
+        const idx = days - 1 - diffDays;
+        if (idx < 0 || idx >= buckets.length) return;
+        const baseAmount = Math.abs(Number(tx.amount) || 0);
+        buckets[idx].amount += baseAmount;
+      });
+
+      const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+      const labels = buckets.map((b) =>
+        b.date.toLocaleDateString(locale, {
+          day: "2-digit",
+          month: "2-digit",
+        })
+      );
+      const data = buckets.map((b) => {
+        const tl = b.amount;
+        return currentCurrency === "EUR" ? tl / CURRENCY_EUR_RATE : tl;
+      });
+
+      return { labels, data, days };
+    }
+
+    function updateChart() {
+      if (typeof Chart === "undefined") return;
+      const canvas = document.getElementById("txChart");
+      if (!canvas || !canvas.getContext) return;
+
+      const { labels, data, days } = buildChartData();
+      const ctx = canvas.getContext("2d");
+
+      const borderColor =
+        currentCurrency === "EUR" ? "rgba(0,113,227,0.85)" : "rgba(39,174,96,0.9)";
+      const bgColor =
+        currentCurrency === "EUR" ? "rgba(0,113,227,0.18)" : "rgba(39,174,96,0.22)";
+
+      if (txChart) {
+        txChart.data.labels = labels;
+        txChart.data.datasets[0].data = data;
+        txChart.data.datasets[0].backgroundColor = bgColor;
+        txChart.data.datasets[0].borderColor = borderColor;
+        txChart.update();
+      } else {
+        txChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor: bgColor,
+                borderColor: borderColor,
+                borderWidth: 1,
+                borderRadius: 4,
+                maxBarThickness: 24,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const val = Number(context.parsed.y || 0);
+                    const symbol = currentCurrency === "EUR" ? "€" : "₺";
+                    const abs = Math.abs(val).toFixed(2).replace(".", ",");
+                    if (currentLang === "de") {
+                      return symbol + " " + abs + " Ausgaben";
+                    } else {
+                      return symbol + " " + abs + " harcama";
+                    }
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+              },
+              y: {
+                grid: { color: "rgba(0,0,0,0.06)" },
+                ticks: {
+                  callback: function (value) {
+                    const num = Number(value);
+                    const abs = Math.abs(num).toFixed(0);
+                    const symbol = currentCurrency === "EUR" ? "€" : "₺";
+                    return symbol + " " + abs;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      if (chartTitleEl) {
+        chartTitleEl.textContent = t("chartTitle");
+      }
+      if (chartSubtitleEl) {
+        const curSymbol = currentCurrency === "EUR" ? "€" : "₺";
+        chartSubtitleEl.textContent = t("chartSubtitle", {
+          days: days,
+          cur: curSymbol,
+        });
+      }
+    }
+
+    async function loadUserAndTransactions() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.status === 401) {
+          window.location.href = "/";
+          return;
+        }
+        const data = await res.json();
+        const user = data.user;
+        const txs = data.transactions || [];
+
+        if (userNameTopEl) {
+          userNameTopEl.textContent = user.name || "Kullanıcı";
+        }
+
+        allTransactions = txs;
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function exportToCsv() {
+      const rows = [];
+      const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+      const filtered = getFilteredTransactions();
+      const sep = ";";
+
+      // Başlık satırı
+      const header =
+        (currentLang === "de"
+          ? ["Datum", "Beschreibung", "Typ", "Betrag (TL)", "Quelle"]
+          : ["Tarih", "Açıklama", "Tip", "Tutar (TL)", "Kaynak"]
+        ).join(sep);
+      rows.push(header);
+
+      filtered.forEach((tx) => {
+        const d = new Date(tx.created_at);
+        const dateStr = d.toLocaleString(locale);
+        const desc = (tx.description || "").replace(/[\r\n]+/g, " ");
+        const typeStr = tx.type === "load" ? t("labelLoad") : t("labelSpend");
+        const amountStr = String(tx.amount || 0).replace(".", ",");
+        const src = (tx.source || "").toString();
+        rows.push(
+          [
+            `"${dateStr}"`,
+            `"${desc}"`,
+            `"${typeStr}"`,
+            `"${amountStr}"`,
+            `"${src}"`,
+          ].join(sep)
+        );
+      });
+
+      const blob = new Blob([rows.join("\r\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tau_yemekhane_hareketler.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportToPrintView() {
+      const filtered = getFilteredTransactions();
+      const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+
+      const title =
+        currentLang === "de"
+          ? "TAU Mensa · Kontobewegungen"
+          : "TAÜ Yemekhane · Hesap Hareketleri";
+
+      let html = `
+        <html>
+          <head>
+            <title>${title}</title>
+            <meta charset="UTF-8" />
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+                font-size: 12px;
+                margin: 16px;
+                color: #111;
+              }
+              h1 {
+                font-size: 18px;
+                margin-bottom: 8px;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              th, td {
+                border: 1px solid #ccc;
+                padding: 6px 8px;
+                text-align: left;
+              }
+              th {
+                background: #f5f5f7;
+              }
+              td.amount {
+                text-align: right;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>${title}</h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>${currentLang === "de" ? "Datum" : "Tarih"}</th>
+                  <th>${currentLang === "de" ? "Beschreibung" : "Açıklama"}</th>
+                  <th>${currentLang === "de" ? "Typ" : "Tip"}</th>
+                  <th>${currentLang === "de" ? "Betrag (TL)" : "Tutar (TL)"}</th>
+                  <th>${currentLang === "de" ? "Quelle" : "Kaynak"}</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+
+      filtered.forEach((tx) => {
+        const d = new Date(tx.created_at);
+        const dateStr = d.toLocaleString(locale);
+        const desc = (tx.description || "").replace(/[\r\n]+/g, " ");
+        const typeStr = tx.type === "load" ? t("labelLoad") : t("labelSpend");
+        const amountStr = String(tx.amount || 0).replace(".", ",");
+        const src = (tx.source || "").toString();
+        html += `
+          <tr>
+            <td>${dateStr}</td>
+            <td>${desc}</td>
+            <td>${typeStr}</td>
+            <td class="amount">${amountStr}</td>
+            <td>${src}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+
+      const win = window.open("", "txPrint");
+      if (!win) return;
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+      win.print();
+    }
+
+    // --- Eventler ve init ---
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.getAttribute("data-filter") || "all";
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      });
+    }
+
+    if (currencyToggleBtn) {
+      currencyToggleBtn.addEventListener("click", () => {
+        currentCurrency = currentCurrency === "TRY" ? "EUR" : "TRY";
+        try {
+          localStorage.setItem("tau-currency", currentCurrency);
+        } catch (e) {}
+        updateCurrencyToggleLabel();
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      });
+    }
+
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener("click", () => {
+        const next = currentLang === "tr" ? "de" : "tr";
+        try {
+          localStorage.setItem("tau-lang", next);
+        } catch (e) {}
+        applyLanguage(next);
+      });
+    }
+
+    if (dateRangeSelect) {
+      dateRangeSelect.addEventListener("change", () => {
+        currentDateRange = dateRangeSelect.value || "all";
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      });
+    }
+
+    if (methodFilterSelect) {
+      methodFilterSelect.addEventListener("change", () => {
+        currentMethodFilter = methodFilterSelect.value || "all";
+        renderSummary();
+        renderTransactions();
+        updateChart();
+      });
+    }
+
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener("click", exportToCsv);
+    }
+
+    if (exportPdfBtn) {
+      exportPdfBtn.addEventListener("click", exportToPrintView);
+    }
+
+    if (backToPanelBtn) {
+      backToPanelBtn.addEventListener("click", () => {
+        window.location.href = "/panel.html";
+      });
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await fetch("/api/logout", { method: "POST" });
+        } catch (e) {}
+        window.location.href = "/";
+      });
+    }
+
+    // Başlangıç ayarları
+    (function init() {
+      try {
+        const savedCurrency = localStorage.getItem("tau-currency");
+        currentCurrency = savedCurrency === "EUR" ? "EUR" : "TRY";
+      } catch (e) {
+        currentCurrency = "TRY";
+      }
+      updateCurrencyToggleLabel();
+
+      try {
+        const savedLang = localStorage.getItem("tau-lang");
+        const initialLang = savedLang === "de" ? "de" : "tr";
+        applyLanguage(initialLang);
+      } catch (e) {
+        applyLanguage("tr");
+      }
+
+      loadUserAndTransactions();
+    })();
+  </script>
+</body>
+</html>

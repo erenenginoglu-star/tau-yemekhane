@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>TAÜ Yemekhane · Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --ink: #111111;
+      --subtle: #6e6e73;
+      --border-soft: rgba(0,0,0,0.08);
+      --shadow-soft: 0 18px 46px rgba(0,0,0,0.08);
+      --tau-green: #27ae60;
+      --premium-gold: #f5b400;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+
+    
+    body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    system-ui, -system-ui, "Segoe UI", sans-serif;
+  /* background: radial-gradient(circle at top, #ffffff 0, #f5f5f7 42%, #e5e5ea 100%); */
+  background: transparent;
+  color: var(--ink);
+  position: relative;
+  overflow-x: hidden;
+}
+
+    
+
+    /* DARK MODE */
+    body[data-theme="dark"] {
+      --ink: #f5f5f7;
+      --subtle: #a1a1a6;
+      --border-soft: rgba(255,255,255,0.16);
+      --shadow-soft: 0 24px 60px rgba(0,0,0,0.7);
+      background: radial-gradient(circle at top, #000000 0, #121214 42%, #000000 100%);
+      color: var(--ink);
+    }
+
+    /* Alman bayrak / background */
+    
+      .bg-hero {
+  position: fixed;
+  inset: 0;
+  background: url("alman.jpg") center/cover no-repeat;
+  filter: blur(4px);   /* 20% blur efekti gibi düşünebilirsin */
+  opacity: 1;          /* 0.2 yerine 1: artık arkadaki beyaz görünmez */
+  pointer-events: none;
+  z-index: -1;
+}
+
+
+
+    body[data-theme="dark"] .bg-hero {
+      opacity: 0.3;
+      filter: blur(4px) saturate(1.05);
+    }
+
+    .top-nav {
+      max-width: 1200px;
+      margin: 16px auto 0;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--subtle);
+      position: relative;
+      z-index: 1;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo-img { height: 40px; width: auto; display: block; }
+    .brand-text-main {
+      font-size: 14px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #1d1d1f;
+    }
+    .brand-text-sub { font-size: 12px; color: var(--subtle); }
+
+    body[data-theme="dark"] .brand-text-main {
+      color: #f5f5f7;
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 10px 4px 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(0,0,0,0.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor: pointer;
+    }
+    body[data-theme="dark"] .user-pill {
+      background: rgba(28,28,30,0.9);
+      border-color: rgba(255,255,255,0.16);
+      color: #f5f5f7;
+    }
+
+    .avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#0071e3,#34c759);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      font-weight:600;
+    }
+    .premium-chip {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      background: linear-gradient(135deg,#f5b400,#ffdd55);
+      color: #3a2a00;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .premium-chip-dot {
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.9);
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #1d1d1f;
+    }
+    .btn-ghost:hover { background: #f5f5f7; }
+    body[data-theme="dark"] .btn-ghost {
+      background: rgba(28,28,30,0.9);
+      border-color: rgba(255,255,255,0.14);
+      color: #f5f5f7;
+    }
+    body[data-theme="dark"] .btn-ghost:hover {
+      background: #2c2c2e;
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.9);
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #1d1d1f;
+    }
+    .nav-pill:hover { background: #f5f5f7; }
+    body[data-theme="dark"] .nav-pill {
+      background: rgba(28,28,30,0.9);
+      border-color: rgba(255,255,255,0.16);
+      color: #f5f5f7;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 18px auto 40px;
+      padding: 0 20px 40px;
+      display: grid;
+      grid-template-columns: 2fr 1.3fr;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-main, .card-block {
+      background:#fff;
+      border-radius:26px;
+      border:1px solid var(--border-soft);
+      box-shadow:var(--shadow-soft);
+      padding:20px 22px 18px;
+    }
+    .card-main { padding:22px 24px 20px; }
+
+    body[data-theme="dark"] .card-main,
+    body[data-theme="dark"] .card-block {
+      background: #1c1c1e;
+      border-color: var(--border-soft);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .section-label {
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.18em;
+      color:var(--subtle);
+      margin-bottom:6px;
+    }
+    .card-title {
+      font-size:22px;
+      font-weight:650;
+      letter-spacing:-0.03em;
+      margin:0 0 14px;
+      color:#1d1d1f;
+    }
+    body[data-theme="dark"] .card-title {
+      color:#f5f5f7;
+    }
+
+    .card-title-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .balance-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .balance-amount {
+      font-size:34px;
+      font-weight:650;
+      letter-spacing:-0.05em;
+      color:#1d1d1f;
+    }
+    body[data-theme="dark"] .balance-amount {
+      color:#f5f5f7;
+    }
+    .balance-alt {
+      font-size:13px;
+      color:var(--subtle);
+      margin-top:2px;
+    }
+    .balance-chip {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 9px;
+      border-radius:999px;
+      background:#f5f5f7;
+      font-size:12px;
+      color:#3a3a3c;
+    }
+    body[data-theme="dark"] .balance-chip {
+      background:#2c2c2e;
+      color:#f5f5f7;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    .balance-sub { font-size:13px; color:var(--subtle); margin-top:4px; }
+
+    .progress-bar-wrap { margin-top:10px; }
+    .progress-label-row {
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+      color:var(--subtle);
+      margin-bottom:4px;
+    }
+    .progress-track {
+      width:100%; height:7px; border-radius:999px;
+      background:#f1f1f4; overflow:hidden;
+    }
+    .progress-fill {
+      height:100%; width:56%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#0071e3,#34c759);
+    }
+
+    /* Öğün counter kartı */
+    .meal-counter-card {
+      margin-top: 16px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: linear-gradient(
+        135deg,
+        rgba(0, 113, 227, 0.08),
+        rgba(52, 199, 89, 0.12)
+      );
+      border: 1px solid rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #1d1d1f;
+    }
+    body[data-theme="dark"] .meal-counter-card {
+      background: linear-gradient(
+        135deg,
+        rgba(10, 132, 255, 0.25),
+        rgba(48, 209, 88, 0.3)
+      );
+      border-color: rgba(255,255,255,0.08);
+      color:#f5f5f7;
+    }
+
+    .meal-counter-label {
+      color: var(--subtle);
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+    .meal-counter-value {
+      font-size: 20px;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+    }
+    .meal-counter-breakdown {
+      font-size: 11px;
+      color: var(--subtle);
+      margin-top: 2px;
+    }
+    .meal-counter-tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.06);
+      white-space: nowrap;
+      text-align: right;
+    }
+    body[data-theme="dark"] .meal-counter-tag {
+      background:#1c1c1e;
+      border-color:rgba(255,255,255,0.12);
+      color:#f5f5f7;
+    }
+
+    /* Paket hakları kutusu */
+    .package-rights-card {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: #f5f5f7;
+      border: 1px dashed rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+    body[data-theme="dark"] .package-rights-card {
+      background:#2c2c2e;
+      border-color:rgba(255,255,255,0.16);
+    }
+    .package-rights-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 2px;
+    }
+    body[data-theme="dark"] .package-rights-title {
+      color:#f5f5f7;
+    }
+    .package-rights-total {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .package-rights-sub {
+      font-size: 11px;
+      color: var(--subtle);
+    }
+    .package-rights-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .package-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    body[data-theme="dark"] .package-tag {
+      background:#1c1c1e;
+      border-color:rgba(255,255,255,0.12);
+      color:#f5f5f7;
+    }
+
+    .actions-row {
+      display:flex; flex-wrap:wrap;
+      gap:10px; margin-top:18px; margin-bottom:6px;
+      align-items: center;
+    }
+    .btn {
+      border:none; border-radius:999px;
+      padding:10px 18px;
+      font-size:14px; font-weight:500;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px; cursor:pointer; outline:none;
+      transition:transform 120ms ease, box-shadow 120ms ease, background 160ms ease, opacity 120ms ease;
+      white-space:nowrap;
+    }
+    .btn-primary {
+      background:linear-gradient(135deg,#00b341,#27ae60);
+      color:#fff;
+      box-shadow:0 12px 30px rgba(4,182,80,0.45);
+      min-width:130px;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background:linear-gradient(135deg,#1adf5f,#00b341);
+      transform:translateY(-1px);
+      box-shadow:0 16px 38px rgba(4,182,80,0.5);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    .btn-secondary {
+      background:#f5f5f7;
+      color:#111;
+      border:1px solid rgba(0,0,0,0.06);
+    }
+    .btn-secondary:hover {
+      background:#e5e5ea;
+      transform:translateY(-1px);
+    }
+    body[data-theme="dark"] .btn-secondary {
+      background:#2c2c2e;
+      color:#f5f5f7;
+      border-color:rgba(255,255,255,0.12);
+    }
+    body[data-theme="dark"] .btn-secondary:hover {
+      background:#3a3a3c;
+    }
+
+    .btn-load {
+      background:#fff;
+      color:#111;
+      border:1px solid rgba(0,0,0,0.1);
+      box-shadow:0 10px 24px rgba(0,0,0,0.08);
+      padding-inline:18px 20px;
+      position:relative;
+    }
+    .btn-load:hover {
+      transform:translateY(-1px);
+      box-shadow:0 16px 40px rgba(0,0,0,0.12);
+    }
+    .btn-load.clicked {
+      transform:scale(0.97);
+      opacity:0.94;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    }
+    .flag-germany {
+      width:28px; height:18px;
+      border-radius:3px;
+      border:1px solid rgba(0,0,0,0.35);
+      background-image:linear-gradient(
+        to bottom,
+        #000000 0 33%,
+        #dd0000 33% 66%,
+        #ffce00 66% 100%
+      );
+      background-size:200% 100%;
+      box-shadow:0 1px 3px rgba(0,0,0,0.2);
+      transform-origin:left center;
+    }
+    .btn-load:hover .flag-germany {
+      animation:flag-wave .99s ease-in-out infinite alternate;
+    }
+    @keyframes flag-wave {
+      0% { transform:perspective(140px) rotateY(0deg) skewY(0deg); background-position:0 0; }
+      50% { transform:perspective(140px) rotateY(-9deg) skewY(-3deg); background-position:40% 0; }
+      100% { transform:perspective(140px) rotateY(6deg) skewY(2deg); background-position:80% 0; }
+    }
+    .badge {
+      font-size:11px;
+      padding:3px 9px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.12);
+      background:rgba(245,245,247,0.9);
+      color:#555;
+    }
+
+    .card-block + .card-block { margin-top:14px; }
+    .list { list-style:none; padding:0; margin:6px 0 0; font-size:13px; color:#3a3a3c; }
+    .list-item {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:8px 0; border-bottom:1px solid rgba(0,0,0,0.04);
+    }
+    .list-item:last-child { border-bottom:none; }
+    .muted { color:var(--subtle); font-size:12px; }
+
+    .stats-row {
+      display:flex; gap:14px; margin-top:18px;
+      flex-wrap:wrap; font-size:12px; color:var(--subtle);
+    }
+    .stat-chip {
+      padding:6px 9px; border-radius:14px; background:#f5f5f7;
+    }
+    body[data-theme="dark"] .stat-chip {
+      background:#2c2c2e;
+      color:#f5f5f7;
+    }
+
+    /* Premium kartı */
+    .premium-card {
+      margin-top: 14px;
+      padding: 14px 14px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: linear-gradient(
+        135deg,
+        rgba(245, 180, 0, 0.12),
+        rgba(255, 230, 160, 0.35)
+      );
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+    .premium-card-active {
+      background: linear-gradient(
+        135deg,
+        rgba(245, 180, 0, 0.25),
+        rgba(255, 230, 160, 0.7)
+      );
+      border-color: rgba(0,0,0,0.1);
+    }
+    .premium-left {
+      flex: 1;
+      min-width: 0;
+    }
+    .premium-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #7a5a00;
+      margin-bottom: 4px;
+    }
+    .premium-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #3a2a00;
+      margin-bottom: 2px;
+    }
+    .premium-desc {
+      font-size: 11px;
+      color: #5a4a20;
+    }
+    .premium-right {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+    }
+    .premium-price {
+      font-size: 18px;
+      font-weight: 650;
+      color: #3a2a00;
+    }
+    .premium-price span {
+      font-size: 11px;
+      font-weight: 400;
+      margin-left: 2px;
+    }
+    .premium-btn {
+      padding-inline: 16px;
+      font-size: 13px;
+    }
+    .premium-status {
+      font-size: 11px;
+      color: #5a4a20;
+      min-height: 14px;
+    }
+
+    body[data-theme="dark"] .premium-label {
+      color:#f5f5f7;
+    }
+    body[data-theme="dark"] .premium-title {
+      color:#f5f5f7;
+    }
+    body[data-theme="dark"] .premium-desc {
+      color:#f5f5f7;
+    }
+    body[data-theme="dark"] .premium-price {
+      color:#f5f5f7;
+    }
+    body[data-theme="dark"] .premium-status {
+      color:#f5f5f7;
+    }
+
+    .footer-note {
+      max-width:1200px;
+      margin:0 auto 24px;
+      padding:0 20px;
+      font-size:11px;
+      color:var(--subtle);
+      position: relative;
+      z-index: 1;
+    }
+    body[data-theme="dark"] .footer-note {
+      color:var(--subtle);
+    }
+
+    /* TAÜ yemek menüsü iframe */
+    .menu-iframe {
+      width:100%;
+      border:none;
+      border-radius:18px;
+      height:260px;
+      background:#f5f5f7;
+      overflow:hidden;
+    }
+    body[data-theme="dark"] .menu-iframe {
+      background:#2c2c2e;
+    }
+
+    /* Modal ortak stiller */
+    .load-sheet-backdrop,
+    .qr-backdrop {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.28);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:20;
+    }
+    .load-sheet-backdrop.visible,
+    .qr-backdrop.visible {
+      display:flex;
+    }
+
+    .load-sheet {
+      width:100%; max-width:480px;
+      background:#fff;
+      border-radius:24px;
+      box-shadow:0 24px 60px rgba(0,0,0,0.35);
+      padding:16px 18px 20px;
+      animation:sheet-up .22s ease-out;
+    }
+    body[data-theme="dark"] .load-sheet {
+      background:#1c1c1e;
+      color:var(--ink);
+    }
+    @keyframes sheet-up {
+      from{transform:translateY(20px);opacity:0;}
+      to{transform:translateY(0);opacity:1;}
+    }
+    .sheet-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:8px;
+    }
+    .sheet-title { font-size:16px; font-weight:600; color:#1d1d1f; }
+    body[data-theme="dark"] .sheet-title {
+      color:#f5f5f7;
+    }
+    .sheet-close {
+      border:none; background:#f5f5f7;
+      border-radius:999px; padding:4px 9px;
+      font-size:12px; cursor:pointer;
+    }
+    body[data-theme="dark"] .sheet-close {
+      background:#2c2c2e;
+      color:#f5f5f7;
+    }
+    .sheet-row { margin-top:10px; margin-bottom:10px; }
+    .sheet-label { font-size:12px; color:var(--subtle); margin-bottom:4px; }
+    .sheet-input {
+      width:100%; padding:9px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,0.12);
+      background:#f5f5f7;
+      font-size:14px; outline:none;
+    }
+    .sheet-input:focus {
+      background:#fff; border-color:#0071e3;
+      box-shadow:0 0 0 2px rgba(0,113,227,0.15);
+    }
+    body[data-theme="dark"] .sheet-input {
+      background:#2c2c2e;
+      border-color:rgba(255,255,255,0.16);
+      color:#f5f5f7;
+    }
+    .sheet-footer {
+      margin-top:12px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:12px; color:var(--subtle);
+      gap:8px;
+    }
+    .btn-confirm {
+      background:#111; color:#fff;
+      border-radius:999px; border:none;
+      padding:9px 16px; font-size:14px;
+      cursor:pointer;
+    }
+    .btn-confirm:hover { background:#000; }
+
+    .qr-card {
+      width:100%;
+      max-width:420px;
+      background:#ffffff;
+      border-radius:24px;
+      padding:18px 18px 20px;
+      box-shadow:0 24px 60px rgba(0,0,0,0.4);
+      animation:sheet-up .22s ease-out;
+    }
+    body[data-theme="dark"] .qr-card {
+      background:#1c1c1e;
+      color:var(--ink);
+    }
+    .qr-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .qr-title {
+      font-size:16px;
+      font-weight:600;
+      color:#1d1d1f;
+    }
+    body[data-theme="dark"] .qr-title {
+      color:#f5f5f7;
+    }
+    .qr-close {
+      border:none;
+      background:#f5f5f7;
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:12px;
+      cursor:pointer;
+    }
+    body[data-theme="dark"] .qr-close {
+      background:#2c2c2e;
+      color:#f5f5f7;
+    }
+    .qr-frame {
+      margin-top:10px;
+      display:flex;
+      justify-content:center;
+    }
+    .qr-inner {
+      position:relative;
+      padding:16px;
+      border-radius:24px;
+      background:#ffffff;
+      box-shadow:0 16px 40px rgba(0,0,0,0.18);
+      background-image:linear-gradient(135deg,#000000 0%,#dd0000 45%,#ffce00 100%);
+      background-origin:border-box;
+    }
+    .qr-inner::before {
+      content:"";
+      position:absolute;
+      inset:3px;
+      border-radius:20px;
+      background:#ffffff;
+      z-index:0;
+    }
+    #qrContainer {
+      position:relative;
+      z-index:1;
+    }
+    #qrContainer canvas, #qrContainer img {
+      width:220px;
+      height:220px;
+      display:block;
+      border-radius:14px;
+    }
+    .qr-color-hint {
+      margin-top:10px;
+      font-size:12px;
+      color:var(--subtle);
+      text-align:center;
+    }
+    .qr-info {
+      margin-top:4px;
+      font-size:11px;
+      color:#999;
+      text-align:center;
+    }
+
+    /* Hava durumu kartı */
+    .weather-card {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 14px; border-radius:18px;
+      background:linear-gradient(135deg, rgba(0,113,227,0.08), rgba(0,0,0,0.02));
+      border:1px solid rgba(0,0,0,0.06);
+    }
+    body[data-theme="dark"] .weather-card {
+      background:linear-gradient(135deg, rgba(10,132,255,0.18), rgba(255,255,255,0.02));
+      border-color:rgba(255,255,255,0.14);
+    }
+    .weather-main { display:flex; align-items:center; gap:10px; }
+    .weather-icon { width:48px; height:48px; }
+    .weather-temp { font-size:22px; font-weight:650; }
+    .weather-meta { font-size:12px; color:var(--subtle); display:flex; gap:10px; flex-wrap:wrap; }
+    .weather-city { font-size:12px; color:var(--subtle); }
+
+    @media (max-width:960px) {
+      .layout { grid-template-columns:1fr; }
+    }
+    @media (max-width:720px) {
+      .top-nav { padding-inline:12px; }
+      .layout { padding-inline:12px; }
+      .card-main, .card-block { border-radius:22px; }
+      .premium-card { flex-direction: column; align-items: flex-start; }
+      .premium-right { align-items: flex-start; text-align: left; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="bg-hero"></div>
+
+  <header class="top-nav">
+    <div class="brand">
+      <img
+        class="brand-logo-img"
+        src="https://3fcampus.tau.edu.tr/uploads/cms/pr.tau/dgFfmceK6A.png"
+        alt="Türk-Alman Üniversitesi Logosu"
+      />
+      <div>
+        <div class="brand-text-main">Türk-Alman Üniversitesi</div>
+        <div class="brand-text-sub" id="brandSub">Yemekhane Paneli</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="user-pill" id="accountTrigger" role="button" tabindex="0">
+        <div class="avatar" id="avatarInitials">EE</div>
+        <span id="userNameTop">Kullanıcı</span>
+        <span class="premium-chip" id="premiumChip">
+          <span class="premium-chip-dot"></span>
+          Premium
+        </span>
+      </div>
+      <button type="button" id="themeToggle" class="nav-pill">🌙 Dark mode</button>
+      <button type="button" id="langToggle" class="nav-pill">🇹🇷 TR</button>
+      <button type="button" id="currencyToggle" class="nav-pill">₺ → €</button>
+      <button id="logoutBtn" class="btn-ghost">Çıkış</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card-main">
+      <div class="section-label" id="sectionBalanceLabel">Yemekhane · Bakiye</div>
+      <h1 class="card-title" id="cardMainTitle">Kampüs kartını bir bakışta yönet.</h1>
+
+      <div class="balance-row">
+        <div>
+          <div class="balance-amount" id="balanceText">₺ 0,00</div>
+          <div class="balance-alt" id="balanceAltText">≈ € 0,00</div>
+          <div class="balance-chip">
+            <span id="balanceChipMain">Yemekhane bakiyesi</span>
+            <span id="balanceChipSub" style="font-size:10px;opacity:0.7;">TAÜ CampusCard</span>
+          </div>
+          <div class="balance-sub" id="lastTxnText">
+            Son işlem bilgisi yükleniyor...
+          </div>
+        </div>
+        <div>
+          <div class="muted" style="text-align:right;" id="todayEstimateLabel">Bugünkü tahmini harcama</div>
+          <div style="font-size:18px;font-weight:600;text-align:right;" id="todayEstimate">₺ 0,00</div>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-label-row">
+          <span id="monthSpendLabel">Bu ayki yemek harcaman</span>
+          <span id="monthSummary">₺ 0 / 1.000</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Öğün counter -->
+      <div class="meal-counter-card">
+        <div>
+          <div class="meal-counter-label" id="mealCounterLabel">Toplam tahmini öğün sayısı</div>
+          <div class="meal-counter-value">
+            <span id="mealCounterValue">0</span> <span id="mealWord">öğün</span>
+          </div>
+          <div class="meal-counter-breakdown" id="mealCounterBreakdown">
+            Bakiyeden: 0 · Paketlerden: 0
+          </div>
+        </div>
+        <div class="meal-counter-tag" id="mealCounterTag"></div>
+      </div>
+
+      <!-- Paket hakları kutusu -->
+      <div class="package-rights-card">
+        <div>
+          <div class="package-rights-title" id="packageRightsTitle">Paket dahilindeki haklarınız</div>
+          <div class="package-rights-total" id="packageTotalMeals">0 öğün</div>
+          <div class="package-rights-sub" id="packageRightsSub">
+            Satın aldığınız aylık öğle / akşam paketlerinden kalan toplam teorik öğün.
+          </div>
+        </div>
+        <div class="package-rights-tags">
+          <span class="package-tag" id="packageLunchTag">Öğle: 0 öğün</span>
+          <span class="package-tag" id="packageDinnerTag">Akşam: 0 öğün</span>
+        </div>
+      </div>
+
+      <!-- ana aksiyon butonları -->
+      <div class="actions-row">
+        <button id="yuklemeBtn" type="button" class="btn btn-load">
+          <span id="btnLoadText">Yükleme Yap</span>
+          <span class="flag-germany" aria-hidden="true"></span>
+          <span class="badge" id="btnLoadBadge">Hover: 🇩🇪 · Click: 🦅</span>
+        </button>
+        <button id="qrBtn" type="button" class="btn btn-primary">
+          QR ile Öde
+        </button>
+        <button type="button" id="autoLoadBtn" class="btn btn-secondary">
+          Otomatik yükleme ayarla (yakında)
+        </button>
+      </div>
+
+      <!-- paket butonları -->
+      <div class="actions-row" style="margin-top:4px;">
+        <button id="lunchPkgBtn" type="button" class="btn btn-secondary">
+          Aylık Öğle Yemeği Paketi · 1.800 TL
+        </button>
+        <button id="dinnerPkgBtn" type="button" class="btn btn-secondary">
+          Aylık Akşam Yemeği Paketi · 1.800 TL
+        </button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip" id="statWeekCount">Bu liste: 0 son işlem</div>
+        <div class="stat-chip" id="statAvgMeal">Ortalama öğün fiyatı: ₺ 0,00</div>
+        <div class="stat-chip" id="statSince">Kayıt tarihi: —</div>
+      </div>
+
+      <!-- Premium kartı -->
+      <div class="premium-card" id="premiumCard">
+        <div class="premium-left">
+          <div class="premium-label" id="premiumLabel">Premium üyelik</div>
+          <div class="premium-title" id="premiumTitle">TAÜ Yemekhane Premium</div>
+          <div class="premium-desc" id="premiumDesc">
+            Aylık 299 TL karşılığında yemek harcamalarında %25 indirim. Öğün fiyatı
+            60 TL yerine 45 TL olarak hesaplanır.
+          </div>
+        </div>
+        <div class="premium-right">
+          <div class="premium-price" id="premiumPrice">₺ 299<span id="premiumPriceSuffix">/ay</span></div>
+          <button id="premiumBtn" class="btn btn-primary premium-btn">Premium'a Geç</button>
+          <div class="premium-status" id="premiumStatus"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside>
+      <!-- HAVA DURUMU -->
+      <section class="card-block">
+        <div class="section-label" id="weatherSectionLabel">Kampüs · Hava Durumu</div>
+        <h2 class="card-title" id="weatherTitle" style="font-size:18px;margin-bottom:10px;">
+          TAÜ (Beykoz) · Şu an
+        </h2>
+        <div class="weather-card" id="weatherCard">
+          <div class="weather-main">
+            <img id="weatherIcon" class="weather-icon" alt="Hava durumu ikonu" src="" />
+            <div>
+              <div class="weather-temp" id="weatherTemp">—°C</div>
+              <div class="weather-city" id="weatherDesc">—</div>
+            </div>
+          </div>
+          <div class="weather-meta">
+            <span id="weatherFeels">Hissedilen: —°C</span>
+            <span id="weatherWind">Rüzgar: — m/s</span>
+            <span id="weatherHum">Nem: —%</span>
+          </div>
+        </div>
+        <div class="muted" id="weatherErr" style="margin-top:6px; display:none;"></div>
+      </section>
+
+      <!-- SKS yemek menüsü -->
+      <section class="card-block" style="margin-top:14px;">
+        <div class="section-label" id="menuSectionLabel">Bugünkü menü</div>
+        <h2 class="card-title" id="menuTitle" style="font-size:18px;margin-bottom:6px;">
+          TAÜ SKS · Resmi Yemek Menüsü
+        </h2>
+        <iframe
+          class="menu-iframe"
+          src="https://sks.tau.edu.tr/yemek-menusu"
+          title="TAÜ Yemek Menüsü"
+        ></iframe>
+        <div class="muted" id="menuNote" style="margin-top:6px;">
+          Menü içeriği doğrudan <strong>sks.tau.edu.tr</strong> sitesinden canlı olarak çekilir.
+          (Site iframe'e izin vermezse burada boş görünebilir.)
+        </div>
+      </section>
+
+      <!-- Son işlemler + TÜMÜNÜ GÖR -->
+      <section class="card-block" style="margin-top:14px;">
+        <div class="section-label" id="lastTxSectionLabel">Son işlemler</div>
+        <div class="card-title-row" style="margin-bottom:6px;">
+          <h2 class="card-title" id="lastTxTitle" style="font-size:18px;margin:0;">
+            Hesap hareketleri
+          </h2>
+          <button id="txPageBtn" class="btn btn-secondary" style="padding:6px 12px;font-size:12px;">
+            Tümünü gör
+          </button>
+        </div>
+        <ul class="list" id="txList">
+          <li class="list-item">
+            <div>
+              <div>İşlemler yükleniyor...</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Spotify chill paneli -->
+      <section class="card-block" style="margin-top:14px;">
+        <div class="section-label" id="musicSectionLabel">Chill · Müzik</div>
+        <h2 class="card-title" id="musicTitle" style="font-size:16px;margin-bottom:8px;">
+          TAÜ YEMEK sistemini kullanırken chillemeniz için
+        </h2>
+        <iframe
+          style="border-radius:18px; width:100%; height:80px; border:none; margin-top:4px;"
+          src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4WYpdgoIcn6?utm_source=generator"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        ></iframe>
+      </section>
+    </aside>
+  </main>
+
+  <div class="footer-note" id="footerNote">
+    TAÜ Yemekhane Ödeme Sistemi · Bu arayüz demo niteliğindedir, gerçek ödeme işlemi yapmaz.
+  </div>
+
+  <!-- Amerikan şahini sesi -->
+  <audio id="eagle-sound" src="eagle-sound.mp3" preload="auto"></audio>
+
+  <!-- Yükleme sheet -->
+  <div id="loadSheetBackdrop" class="load-sheet-backdrop" aria-hidden="true">
+    <div class="load-sheet">
+      <div class="sheet-header">
+        <div class="sheet-title" id="loadSheetTitle">Kartına demo yükleme yap</div>
+        <button id="loadClose" class="sheet-close">Kapat</button>
+      </div>
+      <div class="muted" id="loadSheetDesc">
+        Bu demo sadece bakiyeyi artırır, gerçek ödeme almaz. Alman bayrağı hover’da dalgalanır, tıklamada Amerikan şahini sesi gelir.
+      </div>
+
+      <div class="sheet-row">
+        <div class="sheet-label" id="loadAmountLabel">Yüklenecek tutar (₺)</div>
+        <input id="loadAmount" class="sheet-input" type="number" min="10" step="10" value="100" />
+      </div>
+
+      <div class="sheet-row">
+        <div class="sheet-label" id="loadMethodLabel">Ödeme yöntemi (demo)</div>
+        <select class="sheet-input" id="loadMethodSelect">
+          <option id="loadMethod1">Kredi Kartı · SanalPOS</option>
+          <option id="loadMethod2">Banka Kartı</option>
+          <option id="loadMethod3">SEPA / Avrupa Kartı</option>
+        </select>
+      </div>
+
+      <div class="sheet-footer">
+        <span id="loadStatus">Hazır.</span>
+        <button id="loadConfirm" class="btn-confirm">Yüklemeyi Onayla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR modal -->
+  <div id="qrBackdrop" class="qr-backdrop" aria-hidden="true">
+    <div class="qr-card">
+      <div class="qr-header">
+        <div class="qr-title" id="qrTitle">QR ile Öde</div>
+        <button id="qrClose" class="qr-close">Kapat</button>
+      </div>
+      <div class="muted" id="qrDesc" style="font-size:12px;">
+        Telefonunun kamerasını bu koda tutarak ödeme verisini okuyabilirsin. Demo amaçlıdır.
+      </div>
+      <div class="qr-frame">
+        <div class="qr-inner">
+          <div id="qrContainer"></div>
+        </div>
+      </div>
+      <div class="qr-color-hint" id="qrHint">
+        Kod, <strong>kırmızı · sarı · siyah</strong> tonlu bir çerçeveyle TAÜ Almanya ruhuna uygun tasarlandı.
+      </div>
+      <div id="qrInfoText" class="qr-info"></div>
+    </div>
+  </div>
+
+  <!-- 31 TL şakası -->
+  <div id="prankBackdrop" class="qr-backdrop" aria-hidden="true">
+    <div class="qr-card">
+      <div class="qr-header">
+        <div class="qr-title" id="prankTitle">Hahahaha :)</div>
+        <button id="prankClose" class="qr-close">Kapat</button>
+      </div>
+      <div class="muted" id="prankText">
+        31 TL yüklemeye çalıştığını gördük. Bu rakam biraz garip 😄<br/>
+        Hadi, başka bir tutar dene.
+      </div>
+    </div>
+  </div>
+
+  <!-- Paket onay modalı -->
+  <div id="packageBackdrop" class="qr-backdrop" aria-hidden="true">
+    <div class="qr-card">
+      <div class="qr-header">
+        <div class="qr-title" id="pkgTitle">Paket Onayı</div>
+        <button id="pkgClose" class="qr-close">Kapat</button>
+      </div>
+      <div class="muted" id="pkgDesc">
+        Paket detayları yükleniyor...
+      </div>
+      <div class="muted" style="margin-top:8px;font-size:13px;">
+        Paket fiyatı: <strong>₺ 1.800</strong> · Yemek fiyatı: <strong>₺ 60</strong><br/>
+        <span id="pkgMealsInfo">Bu paketten yaklaşık 30 öğün çıkar.</span>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px;gap:8px;">
+        <button id="pkgCancel" class="qr-close">Vazgeç</button>
+        <button id="pkgConfirm" class="btn-confirm">Onaylıyorum</button>
+      </div>
+      <div id="pkgStatus" class="qr-info" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <!-- QR kütüphanesi -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    // === CONFIG: OpenWeather ===
+    const OPENWEATHER = {
+      apiKey: "244ef665d05765e49084025507839e9c", // senin API key
+      lat: 41.0866, // TAÜ Beykoz
+      lon: 29.0230,
+    };
+
+    // DOM element referansları
+    const eagleSound = document.getElementById("eagle-sound");
+    const loadBtn = document.getElementById("yuklemeBtn");
+    const sheetBackdrop = document.getElementById("loadSheetBackdrop");
+    const sheetClose = document.getElementById("loadClose");
+    const loadConfirm = document.getElementById("loadConfirm");
+    const loadStatus = document.getElementById("loadStatus");
+    const qrBtn = document.getElementById("qrBtn");
+    const qrBackdrop = document.getElementById("qrBackdrop");
+    const qrClose = document.getElementById("qrClose");
+    const qrInfoText = document.getElementById("qrInfoText");
+    const prankBackdrop = document.getElementById("prankBackdrop");
+    const prankClose = document.getElementById("prankClose");
+    const lunchPkgBtn = document.getElementById("lunchPkgBtn");
+    const dinnerPkgBtn = document.getElementById("dinnerPkgBtn");
+    const packageBackdrop = document.getElementById("packageBackdrop");
+    const pkgTitle = document.getElementById("pkgTitle");
+    const pkgDesc = document.getElementById("pkgDesc");
+    const pkgMealsInfo = document.getElementById("pkgMealsInfo");
+    const pkgStatus = document.getElementById("pkgStatus");
+    const pkgClose = document.getElementById("pkgClose");
+    const pkgCancel = document.getElementById("pkgCancel");
+    const pkgConfirm = document.getElementById("pkgConfirm");
+    const premiumBtn = document.getElementById("premiumBtn");
+    const premiumCard = document.getElementById("premiumCard");
+    const premiumStatus = document.getElementById("premiumStatus");
+    const premiumChip = document.getElementById("premiumChip");
+    const mealCounterValueEl = document.getElementById("mealCounterValue");
+    const mealCounterBreakdownEl = document.getElementById("mealCounterBreakdown");
+    const mealCounterTagEl = document.getElementById("mealCounterTag");
+    const packageTotalMealsEl = document.getElementById("packageTotalMeals");
+    const packageLunchTagEl = document.getElementById("packageLunchTag");
+    const packageDinnerTagEl = document.getElementById("packageDinnerTag");
+    const premiumLabelEl = document.getElementById("premiumLabel");
+    const premiumTitleEl = document.getElementById("premiumTitle");
+    const premiumDescEl = document.getElementById("premiumDesc");
+    const premiumPriceSuffixEl = document.getElementById("premiumPriceSuffix");
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const langToggleBtn = document.getElementById("langToggle");
+    const accountTrigger = document.getElementById("accountTrigger");
+    const currencyToggleBtn = document.getElementById("currencyToggle");
+    const balanceAltTextEl = document.getElementById("balanceAltText");
+    const txPageBtn = document.getElementById("txPageBtn");
+    const loadMethodSelect = document.getElementById("loadMethodSelect");
+    const eurRateTextEl = document.getElementById("eurRateText"); // opsiyonel, sayfada yoksa null
+
+    // Weather elements
+    const weatherSectionLabel = document.getElementById("weatherSectionLabel");
+    const weatherTitle = document.getElementById("weatherTitle");
+    const weatherIcon = document.getElementById("weatherIcon");
+    const weatherTemp = document.getElementById("weatherTemp");
+    const weatherDesc = document.getElementById("weatherDesc");
+    const weatherFeels = document.getElementById("weatherFeels");
+    const weatherWind = document.getElementById("weatherWind");
+    const weatherHum = document.getElementById("weatherHum");
+    const weatherErr = document.getElementById("weatherErr");
+
+    let currentUser = null;
+    let currentPackageType = null;
+    let currentLang = "tr";
+    let currentCurrency = "TRY";
+    let CURRENCY_EUR_RATE = 49; // varsayılan, backend'den güncellenecek
+
+    const translations = {
+      tr: {
+        brandSub: "Yemekhane Paneli",
+        logout: "Çıkış",
+        sectionBalanceLabel: "Yemekhane · Bakiye",
+        cardMainTitle: "Kampüs kartını bir bakışta yönet.",
+        balanceChipMain: "Yemekhane bakiyesi",
+        balanceChipSub: "TAÜ CampusCard",
+        lastTxnLoading: "Son işlem bilgisi yükleniyor...",
+        todayEstimateLabel: "Bugünkü tahmini harcama",
+        monthSpendLabel: "Bu ayki yemek harcaman",
+        mealCounterLabel: "Toplam tahmini öğün sayısı",
+        mealWord: "öğün",
+        mealBreakdown: "Bakiyeden: {balanceMeals} · Paketlerden: {packageMeals}",
+        mealTagDefault: "Hesaplama: {price} / öğün",
+        mealTagPremium: "Premium: {price} / öğün (%25 indirim)",
+        packageRightsTitle: "Paket dahilindeki haklarınız",
+        packageRightsSub: "Satın aldığınız aylık öğle / akşam paketlerinden kalan toplam teorik öğün.",
+        packageLunchTag: "Öğle: {n} öğün",
+        packageDinnerTag: "Akşam: {n} öğün",
+        btnLoad: "Yükleme Yap",
+        btnQrPay: "QR ile Öde",
+        btnAutoLoad: "Otomatik yükleme ayarla (yakında)",
+        btnLunchPackage: "Aylık Öğle Yemeği Paketi · 1.800 TL",
+        btnDinnerPackage: "Aylık Akşam Yemeği Paketi · 1.800 TL",
+        statWeekCount: "Bu liste: {n} son işlem",
+        statAvgMeal: "Ortalama öğün fiyatı: {price}",
+        statSince: "Kayıt tarihi: {date}",
+        premiumLabel: "Premium üyelik",
+        premiumTitle: "TAÜ Yemekhane Premium",
+        premiumDesc: "Aylık 299 TL karşılığında yemek harcamalarında %25 indirim. Öğün fiyatı 60 TL yerine 45 TL olarak hesaplanır.",
+        premiumPriceSuffix: "/ay",
+        premiumBtnDefault: "Premium'a Geç",
+        premiumBtnActive: "Premium Aktif",
+        premiumStatusActive: "Yemeklerde %25 indirim uygulanıyor.",
+        premiumStatusBuying: "Premium üyelik satın alınıyor...",
+        premiumStatusError: "İşlem başarısız.",
+        serverError: "Sunucu hatası.",
+        menuSectionLabel: "Bugünkü menü",
+        menuTitle: "TAÜ SKS · Resmi Yemek Menüsü",
+        menuNote: "Menü içeriği doğrudan sks.tau.edu.tr sitesinden canlı olarak çekilir. (Site iframe'e izin vermezse burada boş görünebilir.)",
+        lastTxSectionLabel: "Son işlemler",
+        lastTxTitle: "Hesap hareketleri",
+        txSeeAll: "Tümünü gör",
+        txLoading: "İşlemler yükleniyor...",
+        txNone: "İşlem bulunamadı.",
+        txOnlineLoad: "Online Yükleme",
+        txSpendDefault: "Yemekhane Harcaması",
+        musicSectionLabel: "Chill · Müzik",
+        musicTitle: "TAÜ YEMEK sistemini kullanırken chillemeniz için",
+        footerNote: "TAÜ Yemekhane Ödeme Sistemi · Bu arayüz demo niteliğindedir, gerçek ödeme işlemi yapmaz.",
+        eurRateText: "Güncel kur: 1 € ≈ {rate}",
+        loadSheetTitle: "Kartına demo yükleme yap",
+        loadSheetDesc: "Bu demo sadece bakiyeyi artırır, gerçek ödeme almaz. Alman bayrağı hover’da dalgalanır, tıklamada Amerikan şahini sesi gelir.",
+        loadAmountLabel: "Yüklenecek tutar (₺)",
+        loadMethodLabel: "Ödeme yöntemi (demo)",
+        loadMethod1: "Kredi Kartı · SanalPOS",
+        loadMethod2: "Banka Kartı",
+        loadMethod3: "SEPA / Avrupa Kartı",
+        loadStatusReady: "Hazır.",
+        loadStatusInvalid: "Geçerli bir tutar gir.",
+        loadStatus31: "😄 31 TL olmaz, başka bir tutar dene!",
+        loadStatusRich: "Bu ne zenginlik be bilader 😄",
+        loadStatusSending: "Yükleme gönderiliyor...",
+        loadStatusError: "Yükleme hatası.",
+        loadStatusSuccess: "Yükleme başarılı, bakiye güncelleniyor...",
+        loadStatusServerError: "Sunucu hatası.",
+        btnClose: "Kapat",
+        btnConfirmLoad: "Yüklemeyi Onayla",
+        qrTitle: "QR ile Öde",
+        qrDesc: "Telefonunun kamerasını bu koda tutarak ödeme verisini okuyabilirsin. Demo amaçlıdır.",
+        qrHint: "Kod, kırmızı · sarı · siyah tonlu bir çerçeveyle TAÜ Almanya ruhuna uygun tasarlandı.",
+        qrInfo: "Kod içeriği: TAU-YEMEK · {email}",
+        prankTitle: "Hahahaha :)",
+        prankText: "31 TL yüklemeye çalıştığını gördük. Bu rakam biraz garip 😄\nHadi, başka bir tutar dene.",
+        pkgConfirmTitleLunch: "Öğle Yemeği Paketi",
+        pkgConfirmTitleDinner: "Akşam Yemeği Paketi",
+        pkgConfirmDescLunch: "Aylık öğle yemeği paketini satın almak üzeresin.",
+        pkgConfirmDescDinner: "Aylık akşam yemeği paketini satın almak üzeresin.",
+        pkgMealsInfo: "Paket: 1.800 TL / 60 TL = 30 öğün {type}.",
+        pkgMealsTypeLunch: "öğle yemeği",
+        pkgMealsTypeDinner: "akşam yemeği",
+        pkgStatusBuying: "Paket satın alınıyor...",
+        pkgStatusError: "Paket alınamadı.",
+        pkgStatusSuccess: "Paket satın alındı. Bakiyen güncellendi. Bu paket {meals} öğün içerir.",
+        pkgStatusServerError: "Sunucu hatası.",
+        btnCancel: "Vazgeç",
+        btnConfirm: "Onaylıyorum",
+        monthSummary: "{spend} / {limit}",
+        lastTxnNone: "Henüz işlem yok. Yükleme yaparak başlayabilirsin.",
+        lastTxnSome: "Son işlem: {date} · {amount}",
+        todayEstimateZero: "₺ 0,00",
+        weatherSectionLabel: "Kampüs · Hava Durumu",
+        weatherTitle: "TAÜ (Beykoz) · Şu an",
+        weatherFeels: "Hissedilen: {v}°C",
+        weatherWind: "Rüzgar: {v} m/s",
+        weatherHum: "Nem: {v}%",
+        weatherError: "Hava durumu yüklenemedi."
+      },
+      de: {
+        brandSub: "Mensa-Panel",
+        logout: "Abmelden",
+        sectionBalanceLabel: "Mensa · Guthaben",
+        cardMainTitle: "Verwalte deine CampusCard auf einen Blick.",
+        balanceChipMain: "Mensa-Guthaben",
+        balanceChipSub: "TAU CampusCard",
+        lastTxnLoading: "Letzte Buchung wird geladen...",
+        todayEstimateLabel: "Geschätzte Ausgaben heute",
+        monthSpendLabel: "Monatliche Mensa-Ausgaben",
+        mealCounterLabel: "Geschätzte gesamte Mahlzeiten",
+        mealWord: "Mahlzeiten",
+        mealBreakdown: "Vom Guthaben: {balanceMeals} · Aus Paketen: {packageMeals}",
+        mealTagDefault: "Berechnung: {price} / Mahlzeit",
+        mealTagPremium: "Premium: {price} / Mahlzeit (25 % Rabatt)",
+        packageRightsTitle: "Ihre Paketansprüche",
+        packageRightsSub: "Verbleibende theoretische Mahlzeiten aus Ihren Mittags-/Abendpaketen.",
+        packageLunchTag: "Mittag: {n} Mahlzeiten",
+        packageDinnerTag: "Abend: {n} Mahlzeiten",
+        btnLoad: "Guthaben laden",
+        btnQrPay: "Mit QR zahlen",
+        btnAutoLoad: "Automatische Aufladung (bald)",
+        btnLunchPackage: "Monatliches Mittagspaket · 1.800 TL",
+        btnDinnerPackage: "Monatliches Abendpaket · 1.800 TL",
+        statWeekCount: "Liste: letzte {n} Buchungen",
+        statAvgMeal: "Durchschnittlicher Mahlzeitenpreis: {price}",
+        statSince: "Registriert seit: {date}",
+        premiumLabel: "Premium-Mitgliedschaft",
+        premiumTitle: "TAU Mensa Premium",
+        premiumDesc: "Für 299 TL/Monat erhältst du 25 % Rabatt auf Mahlzeiten. Der Preis sinkt von 60 TL auf 45 TL pro Mahlzeit.",
+        premiumPriceSuffix: "/Monat",
+        premiumBtnDefault: "Zu Premium wechseln",
+        premiumBtnActive: "Premium aktiv",
+        premiumStatusActive: "25 % Rabatt auf alle Mahlzeiten aktiv.",
+        premiumStatusBuying: "Premium-Mitgliedschaft wird gekauft...",
+        premiumStatusError: "Vorgang fehlgeschlagen.",
+        serverError: "Serverfehler.",
+        menuSectionLabel: "Heutiges Menü",
+        menuTitle: "TAU SKS · Offizielles Mensa-Menü",
+        menuNote: "Der Inhalt wird live von sks.tau.edu.tr geladen. (Wenn die Seite iFrames blockiert, kann dieses Feld leer bleiben.)",
+        lastTxSectionLabel: "Letzte Buchungen",
+        lastTxTitle: "Kontobewegungen",
+        txSeeAll: "Alle anzeigen",
+        txLoading: "Buchungen werden geladen...",
+        txNone: "Keine Buchungen gefunden.",
+        txOnlineLoad: "Online-Aufladung",
+        txSpendDefault: "Mensa-Ausgabe",
+        musicSectionLabel: "Chill · Musik",
+        musicTitle: "Zum Chillen während du das TAU-Mensa-System nutzt",
+        footerNote: "TAU Mensa-Bezahlsystem · Dieses Interface ist eine Demo und führt keine echten Zahlungen aus.",
+        eurRateText: "Aktueller Kurs: 1 € ≈ {rate}",
+        loadSheetTitle: "Demo-Guthaben aufladen",
+        loadSheetDesc: "Diese Demo erhöht nur dein Guthaben, ohne echte Zahlung. Die deutsche Flagge weht beim Hover, beim Klick ertönt ein Adler-Schrei.",
+        loadAmountLabel: "Aufzuladender Betrag (₺)",
+        loadMethodLabel: "Zahlungsmethode (Demo)",
+        loadMethod1: "Kreditkarte · Virtual POS",
+        loadMethod2: "Debitkarte",
+        loadMethod3: "SEPA / Europäische Karte",
+        loadStatusReady: "Bereit.",
+        loadStatusInvalid: "Bitte einen gültigen Betrag eingeben.",
+        loadStatus31: "😄 31 TL? Probier einen anderen Betrag!",
+        loadStatusRich: "Was für ein Reichtum, mein Freund 😄",
+        loadStatusSending: "Aufladung wird gesendet...",
+        loadStatusError: "Aufladefehler.",
+        loadStatusSuccess: "Aufladung erfolgreich, Guthaben wird aktualisiert...",
+        loadStatusServerError: "Serverfehler.",
+        btnClose: "Schließen",
+        btnConfirmLoad: "Aufladung bestätigen",
+        qrTitle: "Mit QR zahlen",
+        qrDesc: "Richte die Kamera deines Handys auf diesen Code, um die Zahlungsdaten zu lesen. Nur zu Demo-Zwecken.",
+        qrHint: "Der Code hat einen Rahmen in Rot · Gelb · Schwarz – passend zum Deutschland-Motiv.",
+        qrInfo: "Code-Inhalt: TAU-YEMEK · {email}",
+        prankTitle: "Hahahaha :)",
+        prankText: "Wir haben gesehen, dass du 31 TL aufladen wolltest. Was ist das denn für ein Betrag? 😄\nProbier doch einen anderen.",
+        pkgConfirmTitleLunch: "Mittagspaket",
+        pkgConfirmTitleDinner: "Abendpaket",
+        pkgConfirmDescLunch: "Du bist dabei, das monatliche Mittagspaket zu kaufen.",
+        pkgConfirmDescDinner: "Du bist dabei, das monatliche Abendpaket zu kaufen.",
+        pkgMealsInfo: "Paket: 1.800 TL / 60 TL = 30 {type}.",
+        pkgMealsTypeLunch: "Mittagsmahlzeiten",
+        pkgMealsTypeDinner: "Abendmahlzeiten",
+        pkgStatusBuying: "Paket wird gekauft...",
+        pkgStatusError: "Paket konnte nicht gekauft werden.",
+        pkgStatusSuccess: "Paket gekauft. Guthaben aktualisiert. Dieses Paket enthält {meals} Mahlzeiten.",
+        pkgStatusServerError: "Serverfehler.",
+        btnCancel: "Abbrechen",
+        btnConfirm: "Ich bestätige",
+        monthSummary: "{spend} / {limit}",
+        lastTxnNone: "Noch keine Buchung. Du kannst mit einer Aufladung starten.",
+        lastTxnSome: "Letzte Buchung: {date} · {amount}",
+        todayEstimateZero: "₺ 0,00",
+        weatherSectionLabel: "Campus · Wetter",
+        weatherTitle: "TAU (Beykoz) · Jetzt",
+        weatherFeels: "Gefühlt: {v}°C",
+        weatherWind: "Wind: {v} m/s",
+        weatherHum: "Feuchtigkeit: {v}%",
+        weatherError: "Wetter konnte nicht geladen werden."
+      }
+    };
+
+    function t(key, vars = {}) {
+      const dict = translations[currentLang] || translations.tr;
+      let str = dict[key] || key;
+      for (const k in vars) {
+        str = str.replace(`{${k}}`, vars[k]);
+      }
+      return str;
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang === "de" ? "de" : "tr";
+      const dict = translations[lang] || translations.tr;
+      const el = (id) => document.getElementById(id);
+
+      if (el("brandSub")) el("brandSub").textContent = dict.brandSub;
+      if (el("logoutBtn")) el("logoutBtn").textContent = dict.logout;
+      if (el("sectionBalanceLabel")) el("sectionBalanceLabel").textContent = dict.sectionBalanceLabel;
+      if (el("cardMainTitle")) el("cardMainTitle").textContent = dict.cardMainTitle;
+      if (el("balanceChipMain")) el("balanceChipMain").textContent = dict.balanceChipMain;
+      if (el("balanceChipSub")) el("balanceChipSub").textContent = dict.balanceChipSub;
+      if (el("lastTxnText")) el("lastTxnText").textContent = dict.lastTxnLoading;
+      if (el("todayEstimateLabel")) el("todayEstimateLabel").textContent = dict.todayEstimateLabel;
+      if (el("monthSpendLabel")) el("monthSpendLabel").textContent = dict.monthSpendLabel;
+      if (el("mealCounterLabel")) el("mealCounterLabel").textContent = dict.mealCounterLabel;
+      if (el("mealWord")) el("mealWord").textContent = dict.mealWord;
+      if (el("packageRightsTitle")) el("packageRightsTitle").textContent = dict.packageRightsTitle;
+      if (el("packageRightsSub")) el("packageRightsSub").textContent = dict.packageRightsSub;
+
+      const loadTextSpan = el("btnLoadText");
+      if (loadTextSpan) loadTextSpan.textContent = dict.btnLoad;
+      const qrBtnEl = el("qrBtn");
+      if (qrBtnEl) qrBtnEl.textContent = dict.btnQrPay;
+      const autoBtnEl = el("autoLoadBtn");
+      if (autoBtnEl) autoBtnEl.textContent = dict.btnAutoLoad;
+      if (el("lunchPkgBtn")) el("lunchPkgBtn").textContent = dict.btnLunchPackage;
+      if (el("dinnerPkgBtn")) el("dinnerPkgBtn").textContent = dict.btnDinnerPackage;
+
+      if (premiumLabelEl) premiumLabelEl.textContent = dict.premiumLabel;
+      if (premiumTitleEl) premiumTitleEl.textContent = dict.premiumTitle;
+      if (premiumDescEl) premiumDescEl.textContent = dict.premiumDesc;
+      if (premiumPriceSuffixEl) premiumPriceSuffixEl.textContent = dict.premiumPriceSuffix;
+
+      if (el("menuSectionLabel")) el("menuSectionLabel").textContent = dict.menuSectionLabel;
+      if (el("menuTitle")) el("menuTitle").textContent = dict.menuTitle;
+      if (el("menuNote")) el("menuNote").textContent = dict.menuNote;
+
+      if (el("lastTxSectionLabel")) el("lastTxSectionLabel").textContent = dict.lastTxSectionLabel;
+      if (el("lastTxTitle")) el("lastTxTitle").textContent = dict.lastTxTitle;
+      if (el("txPageBtn")) el("txPageBtn").textContent = dict.txSeeAll;
+
+      if (el("musicSectionLabel")) el("musicSectionLabel").textContent = dict.musicSectionLabel;
+      if (el("musicTitle")) el("musicTitle").textContent = dict.musicTitle;
+
+      if (el("footerNote")) el("footerNote").textContent = dict.footerNote;
+
+      if (el("loadSheetTitle")) el("loadSheetTitle").textContent = dict.loadSheetTitle;
+      if (el("loadSheetDesc")) el("loadSheetDesc").textContent = dict.loadSheetDesc;
+      if (el("loadAmountLabel")) el("loadAmountLabel").textContent = dict.loadAmountLabel;
+      if (el("loadMethodLabel")) el("loadMethodLabel").textContent = dict.loadMethodLabel;
+
+      if (loadMethodSelect && loadMethodSelect.options.length >= 3) {
+        loadMethodSelect.options[0].textContent = dict.loadMethod1;
+        loadMethodSelect.options[1].textContent = dict.loadMethod2;
+        loadMethodSelect.options[2].textContent = dict.loadMethod3;
+      }
+
+      if (sheetClose) sheetClose.textContent = dict.btnClose;
+      if (loadConfirm) loadConfirm.textContent = dict.btnConfirmLoad;
+      if (loadStatus) loadStatus.textContent = dict.loadStatusReady;
+
+      if (document.getElementById("qrTitle")) document.getElementById("qrTitle").textContent = dict.qrTitle;
+      if (document.getElementById("qrDesc")) document.getElementById("qrDesc").textContent = dict.qrDesc;
+      if (document.getElementById("qrHint")) document.getElementById("qrHint").textContent = dict.qrHint;
+      if (qrClose) qrClose.textContent = dict.btnClose;
+
+      if (prankClose) prankClose.textContent = dict.btnClose;
+      if (document.getElementById("prankTitle")) document.getElementById("prankTitle").textContent = dict.prankTitle;
+      if (document.getElementById("prankText")) document.getElementById("prankText").textContent = dict.prankText;
+      if (pkgClose) pkgClose.textContent = dict.btnClose;
+      if (pkgCancel) pkgCancel.textContent = dict.btnCancel;
+      if (pkgConfirm) pkgConfirm.textContent = dict.btnConfirm;
+
+      // Weather texts
+      if (weatherSectionLabel) weatherSectionLabel.textContent = dict.weatherSectionLabel;
+      if (weatherTitle) weatherTitle.textContent = dict.weatherTitle;
+
+      if (langToggleBtn) {
+        langToggleBtn.textContent = lang === "tr" ? "🇹🇷 TR" : "🇩🇪 DE";
+      }
+
+      // Kur metnini seçili dile göre güncelle (opsiyonel element)
+      if (eurRateTextEl && CURRENCY_EUR_RATE) {
+        const rateStr = "₺ " + CURRENCY_EUR_RATE.toFixed(2).replace(".", ",");
+        eurRateTextEl.textContent = t("eurRateText", { rate: rateStr });
+      }
+
+      // Dil değişince hava durumunu tekrar yükle
+      loadWeather();
+    }
+
+    function applyTheme(theme) {
+      document.body.dataset.theme = theme;
+      if (themeToggleBtn) {
+        themeToggleBtn.textContent =
+          theme === "dark" ? "☀️ Light mode" : "🌙 Dark mode";
+      }
+    }
+
+    function updateCurrencyToggleLabel() {
+      if (!currencyToggleBtn) return;
+      currencyToggleBtn.textContent =
+        currentCurrency === "TRY" ? "₺ → €" : "€ → ₺";
+    }
+
+    (function initTheme() {
+      try {
+        const saved = localStorage.getItem("tau-theme");
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initial = saved || (prefersDark ? "dark" : "light");
+        applyTheme(initial);
+      } catch (e) {
+        applyTheme("light");
+      }
+    })();
+
+    (function initLang() {
+      try {
+        const saved = localStorage.getItem("tau-lang");
+        const initial = saved === "de" ? "de" : "tr";
+        applyLanguage(initial);
+      } catch (e) {
+        applyLanguage("tr");
+      }
+    })();
+
+    (function initCurrency() {
+      try {
+        const saved = localStorage.getItem("tau-currency");
+        currentCurrency = saved === "EUR" ? "EUR" : "TRY";
+      } catch (e) {
+        currentCurrency = "TRY";
+      }
+      updateCurrencyToggleLabel();
+    })();
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        const next = document.body.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(next);
+        try {
+          localStorage.setItem("tau-theme", next);
+        } catch (e) {}
+      });
+    }
+
+    if (langToggleBtn) {
+      langToggleBtn.addEventListener("click", () => {
+        const next = currentLang === "tr" ? "de" : "tr";
+        applyLanguage(next);
+        try {
+          localStorage.setItem("tau-lang", next);
+        } catch (e) {}
+        if (currentUser) {
+          loadUser();
+        }
+      });
+    }
+
+    if (accountTrigger) {
+      accountTrigger.addEventListener("click", () => {
+        window.location.href = "/account.html";
+      });
+      accountTrigger.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          window.location.href = "/account.html";
+        }
+      });
+    }
+
+    if (txPageBtn) {
+      txPageBtn.addEventListener("click", () => {
+        window.location.href = "/transactions.html";
+      });
+    }
+
+    if (currencyToggleBtn) {
+      currencyToggleBtn.addEventListener("click", () => {
+        currentCurrency = currentCurrency === "TRY" ? "EUR" : "TRY";
+        updateCurrencyToggleLabel();
+        try {
+          localStorage.setItem("tau-currency", currentCurrency);
+        } catch (e) {}
+        renderBalanceCurrency();
+      });
+    }
+
+    function formatTL(amount) {
+      return "₺ " + amount.toFixed(2).replace(".", ",");
+    }
+    function formatEUR(amount) {
+      return "€ " + amount.toFixed(2).replace(".", ",");
+    }
+
+    function renderBalanceCurrency() {
+      if (!currentUser) return;
+      const balanceEl = document.getElementById("balanceText");
+      const amountTL = currentUser.balance || 0;
+      const amountEUR = amountTL / CURRENCY_EUR_RATE;
+      if (currentCurrency === "TRY") {
+        if (balanceEl) balanceEl.textContent = formatTL(amountTL);
+        if (balanceAltTextEl) balanceAltTextEl.textContent = "≈ " + formatEUR(amountEUR);
+      } else {
+        if (balanceEl) balanceEl.textContent = formatEUR(amountEUR);
+        if (balanceAltTextEl) balanceAltTextEl.textContent = "≈ " + formatTL(amountTL);
+      }
+    }
+
+    // -------- Yükleme sheet --------
+    function openSheet() {
+      sheetBackdrop.classList.add("visible");
+      sheetBackdrop.setAttribute("aria-hidden", "false");
+      loadStatus.textContent = t("loadStatusReady");
+    }
+    function closeSheet() {
+      sheetBackdrop.classList.remove("visible");
+      sheetBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    if (loadBtn) {
+      loadBtn.addEventListener("click", () => {
+        // Küçük bir tıklama animasyonu
+        loadBtn.classList.add("clicked");
+        setTimeout(() => loadBtn.classList.remove("clicked"), 150);
+
+        // Tıklandığında Amerikan şahini sesi
+        if (eagleSound) {
+          try {
+            eagleSound.currentTime = 0;
+            eagleSound.play().catch(() => {});
+          } catch (e) {}
+        }
+
+        // Yükleme işlemini artık ayrı bir sayfada yapıyoruz
+        window.location.href = "/aufladen.html";
+      });
+    }
+
+    if (sheetClose) sheetClose.addEventListener("click", closeSheet);
+    if (sheetBackdrop) {
+      sheetBackdrop.addEventListener("click", (e) => {
+        if (e.target === sheetBackdrop) closeSheet();
+      });
+    }
+
+    // 31 TL ve 20.000+ kontrolleri (sheet üzerinden yapılırsa)
+    if (prankClose) {
+      prankClose.addEventListener("click", () => {
+        prankBackdrop.classList.remove("visible");
+        prankBackdrop.setAttribute("aria-hidden", "true");
+      });
+    }
+    if (prankBackdrop) {
+      prankBackdrop.addEventListener("click", (e) => {
+        if (e.target === prankBackdrop) {
+          prankBackdrop.classList.remove("visible");
+          prankBackdrop.setAttribute("aria-hidden", "true");
+        }
+      });
+    }
+
+    if (loadConfirm) {
+      loadConfirm.addEventListener("click", async () => {
+        const amount = Number(document.getElementById("loadAmount").value || 0);
+
+        if (!amount || amount <= 0) {
+          loadStatus.textContent = t("loadStatusInvalid");
+          return;
+        }
+
+        // 31 TL şakası
+        if (amount === 31) {
+          loadStatus.textContent = t("loadStatus31");
+          prankBackdrop.classList.add("visible");
+          prankBackdrop.setAttribute("aria-hidden", "false");
+          return;
+        }
+
+        // 20.000 TL üstü zengin uyarısı
+        if (amount > 20000) {
+          loadStatus.textContent = t("loadStatusRich");
+          return;
+        }
+
+        loadStatus.textContent = t("loadStatusSending");
+        try {
+          const res = await fetch("/api/demo-load", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            loadStatus.textContent = data.error || t("loadStatusError");
+            return;
+          }
+          loadStatus.textContent = t("loadStatusSuccess");
+          await loadUser();
+        } catch (err) {
+          loadStatus.textContent = t("loadStatusServerError");
+        }
+      });
+    }
+
+    // -------- Çıkış --------
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await fetch("/api/logout", { method: "POST" });
+        window.location.href = "/";
+      });
+    }
+
+    // -------- QR modalı --------
+    function openQrModal() {
+      if (!currentUser) return;
+
+      const payload = `TAU-YEMEK|UID=${currentUser.id}|EMAIL=${currentUser.email}|TS=${Date.now()}`;
+
+      const container = document.getElementById("qrContainer");
+      container.innerHTML = "";
+      new QRCode(container, {
+        text: payload,
+        width: 220,
+        height: 220,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M,
+      });
+
+      qrInfoText.textContent = t("qrInfo", { email: currentUser.email });
+      qrBackdrop.classList.add("visible");
+      qrBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function closeQrModal() {
+      qrBackdrop.classList.remove("visible");
+      qrBackdrop.setAttribute("aria-hidden", "true");
+    }
+
+    if (qrBtn) qrBtn.addEventListener("click", openQrModal);
+    if (qrClose) qrClose.addEventListener("click", closeQrModal);
+    if (qrBackdrop) {
+      qrBackdrop.addEventListener("click", (e) => {
+        if (e.target === qrBackdrop) closeQrModal();
+      });
+    }
+
+    // -------- Paket modalı --------
+    function openPackageModal(type) {
+      currentPackageType = type;
+      const isLunch = type === "lunch";
+      pkgTitle.textContent = isLunch ? t("pkgConfirmTitleLunch") : t("pkgConfirmTitleDinner");
+      pkgDesc.textContent = isLunch ? t("pkgConfirmDescLunch") : t("pkgConfirmDescDinner");
+      const typeLabel = isLunch ? t("pkgMealsTypeLunch") : t("pkgMealsTypeDinner");
+      pkgMealsInfo.textContent = t("pkgMealsInfo", { type: typeLabel });
+      pkgStatus.textContent = "";
+
+      packageBackdrop.classList.add("visible");
+      packageBackdrop.setAttribute("aria-hidden", "false");
+    }
+
+    function closePackageModal() {
+      packageBackdrop.classList.remove("visible");
+      packageBackdrop.setAttribute("aria-hidden", "true");
+      currentPackageType = null;
+    }
+
+    if (lunchPkgBtn) lunchPkgBtn.addEventListener("click", () => openPackageModal("lunch"));
+    if (dinnerPkgBtn) dinnerPkgBtn.addEventListener("click", () => openPackageModal("dinner"));
+    if (pkgClose) pkgClose.addEventListener("click", closePackageModal);
+    if (pkgCancel) pkgCancel.addEventListener("click", closePackageModal);
+    if (packageBackdrop) {
+      packageBackdrop.addEventListener("click", (e) => {
+        if (e.target === packageBackdrop) closePackageModal();
+      });
+    }
+
+    if (pkgConfirm) {
+      pkgConfirm.addEventListener("click", async () => {
+        if (!currentPackageType) return;
+        pkgStatus.textContent = t("pkgStatusBuying");
+
+        try {
+          const res = await fetch("/api/buy-package", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ packageType: currentPackageType }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            pkgStatus.textContent = data.error || t("pkgStatusError");
+            return;
+          }
+          pkgStatus.textContent = t("pkgStatusSuccess", { meals: data.meals });
+          await loadUser();
+        } catch (err) {
+          pkgStatus.textContent = t("pkgStatusServerError");
+        }
+      });
+    }
+
+    // -------- Premium butonu --------
+    if (premiumBtn) {
+      premiumBtn.addEventListener("click", async () => {
+        if (!currentUser || currentUser.is_premium) return;
+        premiumStatus.textContent = t("premiumStatusBuying");
+
+        try {
+          const res = await fetch("/api/subscribe-premium", {
+            method: "POST",
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            premiumStatus.textContent = data.error || t("premiumStatusError");
+            return;
+          }
+          premiumStatus.textContent = t("premiumStatusActive");
+          await loadUser();
+        } catch (err) {
+          premiumStatus.textContent = t("serverError");
+        }
+      });
+    }
+
+    // -------- Kullanıcı verisi --------
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/me");
+        if (res.status === 401) {
+          window.location.href = "/";
+          return;
+        }
+        const data = await res.json();
+
+        // EUR kuru backend'den geliyorsa güncelle
+        if (typeof data.eurRate === "number" && data.eurRate > 0) {
+          CURRENCY_EUR_RATE = data.eurRate;
+          if (eurRateTextEl) {
+            const rateStr = "₺ " + data.eurRate.toFixed(2).replace(".", ",");
+            eurRateTextEl.textContent = t("eurRateText", { rate: rateStr });
+          }
+        } else if (eurRateTextEl) {
+          eurRateTextEl.textContent = "";
+        }
+
+        const user = data.user;
+        const txs = data.transactions || [];
+        const pkg = data.packageInfo || {
+          lunchMeals: 0,
+          dinnerMeals: 0,
+          totalMeals: 0,
+        };
+        currentUser = user;
+
+        document.getElementById("userNameTop").textContent = user.name;
+        const initials = (user.name || "K").split(" ")
+          .map((p) => p[0]?.toUpperCase())
+          .slice(0, 2)
+          .join("");
+        document.getElementById("avatarInitials").textContent = initials || "U";
+
+        const mealPrice = user.is_premium ? 45 : 60;
+
+        // Premium badge / text
+        if (user.is_premium) {
+          premiumChip.style.display = "inline-flex";
+          premiumCard.classList.add("premium-card-active");
+          premiumBtn.textContent = t("premiumBtnActive");
+          premiumBtn.disabled = true;
+          premiumStatus.textContent = t("premiumStatusActive");
+          mealCounterTagEl.textContent = t("mealTagPremium", { price: "₺ " + mealPrice });
+        } else {
+          premiumChip.style.display = "none";
+          premiumCard.classList.remove("premium-card-active");
+          premiumBtn.textContent = t("premiumBtnDefault");
+          premiumBtn.disabled = false;
+          premiumStatus.textContent = "";
+          mealCounterTagEl.textContent = t("mealTagDefault", { price: "₺ " + mealPrice });
+        }
+
+        // Öğün hesabı
+        const balanceMeals = Math.floor(user.balance / mealPrice);
+        const packageMeals = pkg.totalMeals || 0;
+        const totalMeals = balanceMeals + packageMeals;
+
+        if (mealCounterValueEl) {
+          mealCounterValueEl.textContent = totalMeals;
+        }
+        if (mealCounterBreakdownEl) {
+          mealCounterBreakdownEl.textContent = t("mealBreakdown", {
+            balanceMeals,
+            packageMeals,
+          });
+        }
+
+        // Paket hakları kutusu
+        if (packageTotalMealsEl) {
+          packageTotalMealsEl.textContent = `${packageMeals} ${t("mealWord")}`;
+        }
+        if (packageLunchTagEl) {
+          packageLunchTagEl.textContent = t("packageLunchTag", { n: pkg.lunchMeals || 0 });
+        }
+        if (packageDinnerTagEl) {
+          packageDinnerTagEl.textContent = t("packageDinnerTag", { n: pkg.dinnerMeals || 0 });
+        }
+
+        const locale = currentLang === "de" ? "de-DE" : "tr-TR";
+
+        // Son işlem
+        if (txs.length > 0) {
+          const last = txs[0];
+          const dateStr = new Date(last.created_at).toLocaleString(locale);
+          const sign = last.type === "load" ? "+" : "-";
+          const amountStr = sign + formatTL(Math.abs(last.amount)).replace("₺ ", "");
+          document.getElementById("lastTxnText").textContent =
+            t("lastTxnSome", { date: dateStr, amount: amountStr });
+        } else {
+          document.getElementById("lastTxnText").textContent = t("lastTxnNone");
+        }
+
+        const weekCount = txs.length;
+        document.getElementById("statWeekCount").textContent =
+          t("statWeekCount", { n: weekCount });
+
+        const spendTx = txs.filter((t) => t.type === "spend" && t.amount < 0);
+        const avg =
+          spendTx.length > 0
+            ? Math.abs(spendTx.reduce((s, t) => s + t.amount, 0)) / spendTx.length
+            : 0;
+        document.getElementById("statAvgMeal").textContent =
+          t("statAvgMeal", { price: formatTL(avg) });
+
+        const createdDate = new Date(user.created_at).toLocaleDateString(locale);
+        document.getElementById("statSince").textContent =
+          t("statSince", { date: createdDate });
+
+        const monthSpend = Math.abs(
+          spendTx.reduce((s, t) => s + t.amount, 0)
+        );
+        const limit = 1000;
+        document.getElementById("monthSummary").textContent =
+          t("monthSummary", { spend: formatTL(monthSpend), limit: formatTL(limit) });
+        const ratio = Math.min(monthSpend / limit, 1);
+        document.getElementById("progressFill").style.width = (ratio * 100).toFixed(0) + "%";
+
+        const lastSpend = spendTx[0];
+        document.getElementById("todayEstimate").textContent =
+          lastSpend ? formatTL(Math.abs(lastSpend.amount)) : t("todayEstimateZero");
+
+        // İşlem listesi
+        const txListEl = document.getElementById("txList");
+        txListEl.innerHTML = "";
+        if (txs.length === 0) {
+          txListEl.innerHTML =
+            '<li class="list-item"><div>' + t("txNone") + "</div></li>";
+        } else {
+          txs.forEach((tx) => {
+            const li = document.createElement("li");
+            li.className = "list-item";
+
+            const left = document.createElement("div");
+            const title = document.createElement("div");
+            title.textContent =
+              tx.type === "load"
+                ? t("txOnlineLoad")
+                : (tx.description || t("txSpendDefault"));
+            const info = document.createElement("div");
+            info.className = "muted";
+            info.textContent = new Date(tx.created_at).toLocaleString(locale);
+            left.appendChild(title);
+            left.appendChild(info);
+
+            const right = document.createElement("div");
+            right.style.textAlign = "right";
+            const amount = document.createElement("div");
+            amount.textContent =
+              (tx.type === "load" ? "+" : "-") +
+              formatTL(Math.abs(tx.amount)).replace("₺ ", "");
+            if (tx.type === "load") {
+              amount.style.color = "var(--tau-green)";
+            }
+            right.appendChild(amount);
+
+            li.appendChild(left);
+            li.appendChild(right);
+            txListEl.appendChild(li);
+          });
+        }
+
+        // En sonda, seçili para birimine göre ana bakiye gösterimi:
+        renderBalanceCurrency();
+      } catch (err) {
+        console.error(err);
+        window.location.href = "/";
+      }
+    }
+
+    // -------- HAVA DURUMU (OpenWeather) --------
+    async function loadWeather() {
+      if (!OPENWEATHER.apiKey) {
+        if (weatherErr) {
+          weatherErr.style.display = "block";
+          weatherErr.textContent = currentLang === "de"
+            ? "Bitte OpenWeather API-Schlüssel hinterlegen."
+            : "Lütfen OpenWeather API anahtarını ekleyin.";
+        }
+        return;
+      }
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${OPENWEATHER.lat}&lon=${OPENWEATHER.lon}&units=metric&lang=${currentLang}&appid=${OPENWEATHER.apiKey}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("bad status");
+        const data = await res.json();
+
+        const temp = Math.round(data.main.temp);
+        const feels = Math.round(data.main.feels_like);
+        const desc = (data.weather && data.weather[0] && data.weather[0].description) ? data.weather[0].description : "—";
+        const icon = (data.weather && data.weather[0] && data.weather[0].icon) ? data.weather[0].icon : "01d";
+        const wind = data.wind?.speed ?? 0;
+        const hum = data.main?.humidity ?? 0;
+
+        if (weatherTemp) weatherTemp.textContent = `${temp}°C`;
+        if (weatherDesc) {
+          const txt = desc ? desc.charAt(0).toUpperCase() + desc.slice(1) : "—";
+          weatherDesc.textContent = txt;
+        }
+        if (weatherIcon) weatherIcon.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+        if (weatherFeels) weatherFeels.textContent = t("weatherFeels", { v: feels });
+        if (weatherWind) weatherWind.textContent = t("weatherWind", { v: wind });
+        if (weatherHum) weatherHum.textContent = t("weatherHum", { v: hum });
+        if (weatherErr) weatherErr.style.display = "none";
+      } catch (e) {
+        console.error(e);
+        if (weatherErr) {
+          weatherErr.style.display = "block";
+          weatherErr.textContent = t("weatherError");
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadUser();
+      loadWeather();
+    });
+  </script>
+</body>
+</html>
