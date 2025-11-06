@@ -12,8 +12,8 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.4.1",
     "cookie-session": "^2.1.1",
-    "express": "^5.1.0",
-    "sqlite3": "^5.1.7"
+    "express": "^5.1.0"
   }
 }
